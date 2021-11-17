@@ -1,0 +1,63 @@
+#canvasArea
+{
+    cursor: crosshair;
+}
+
+#drawBox
+{
+    border-style:double;
+}
+
+.colorSelectBox
+{
+
+    border-radius: 5px;
+    width:15px;
+    height:15px;
+    border:2px solid;
+}
+
+.colorSelectBoxBig
+{
+
+    border-radius: 10px;
+    width:30px;
+    height:30px;
+    border:2px solid;
+}
+
+#green-brush,#green-bg
+{
+    background:green;
+}
+
+#blue-brush,#blue-bg
+{
+    background:blue;
+}
+
+#red-brush,#red-bg
+{
+    background:red;
+}
+
+#yellow-brush,#yellow-bg
+{
+    background:yellow;
+}
+
+#orange-brush,#orange-bg
+{
+    background:orange;
+}
+
+#black-brush,#black-bg
+{
+    background:black;
+}
+
+#white-brush,#white-bg
+{
+    background:white;
+}
+

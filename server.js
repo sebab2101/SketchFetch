@@ -14,7 +14,21 @@ server.listen(process.env.PORT || 9020, function() {
 });
 
 
+io.on('connection', (socket) => {
+	socket.on('changeColor', (data) => {
+		console.log('changeColor: ', data);
+		socket.broadcast.emit('changeColor',data);
+	});
 
-io.on('connection', function (socket) {
+	socket.on('changeBgColor', (data) => {
+		console.log('changeBgColor: ', data);
+		socket.broadcast.emit('changeBgColor',data);
+	});
 
-})
+	socket.on('draw', (data) => {
+		console.log('Draw: ', data);
+		socket.broadcast.emit('draw',data);
+	});
+});
+
+
