@@ -29,6 +29,11 @@ io.on('connection', (socket) => {
 		console.log('Draw: ', data);
 		socket.broadcast.emit('draw',data);
 	});
+
+	socket.on('clearCanvas', (data) => {
+		console.log('Canvas Cleared: ');
+		socket.broadcast.emit('clearCanvas');
+	});
 });
 
 

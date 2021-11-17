@@ -30,7 +30,7 @@
                 <div id="yellow-bg" class="colorSelectBox" onclick="playerCanvas.bgColor(this.id)"></div>
                 <div id="orange-bg" class="colorSelectBox" onclick="playerCanvas.bgColor(this.id)"></div>
                 <div id="black-bg" class="colorSelectBox" onclick="playerCanvas.bgColor(this.id)"></div>
-                <div id="white-bg" class="colorSelectBox" onclick="playerCanvas.color(this.id)"></div>    
+                <div id="white-bg" class="colorSelectBox" onclick="playerCanvas.bgColor(this.id)"></div>    
             </div>
             <img id="canvasimg" style="position:absolute;top:10%;left:52%;" style="display:none;">
             <input type="button" value="draw" id="draw-btn" size="30" onclick="beginDraw()">
@@ -41,6 +41,8 @@
     <!-- socket.io client-side script -->
 	<script src="/socket.io/socket.io.js"></script>
     <!-- custom client-side javascript -->
+
+	<script src="./scripts/canvasArea.js"></script>
 	<script src="index.js"></script>
 
 </html>
