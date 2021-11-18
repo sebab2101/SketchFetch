@@ -4,20 +4,29 @@ class canvasArea{
     canvasWidth;
     canvasHeight;
     ctx;
+    drawBox;
+    drawSizeSelector;
     prevX = 0;
     currX = 0;
     prevY = 0;
     currY = 0;
     drawColor = "black";
-    drawSize = 2;
+    drawSize= 2;
+    drawSizeBuffer = 2;
+    static eraserSize = 14;
     dot_flag = false;
     flag = false;
     backgroundColor = "white";
-    active = false;
+    active = false;    
+    controller = new AbortController();
     constructor(active){
-        this.canvas = document.getElementById('canvasArea');
-        this.mouseCircle = document.getElementById("mouseCircle");
+        this.drawBox = document.querySelector("#drawBox");
+        this.drawSizeSelector = this.drawBox.querySelector("#brushSizeRange");
+        this.drawBox.style.display = "none";
+        this.canvas = document.querySelector("#canvasArea");
+        this.mouseCircle = document.querySelector("#mouseCircle");
         this.ctx = this.canvas.getContext("2d");
+        this.ctx.translate(0.5, 0.5);
         this.canvasWidth = this.canvas.width;
         this.canvasHeight = this.canvas.height;
         this.active = active;
@@ -27,49 +36,80 @@ class canvasArea{
     }
 
     makeActive(){
+        this.drawBox.style.display = "block";
         this.active=true;
+        this.bgColor("white-bg");
+        this.color("black-brush");
         this.addMouseListeners();
     }
 
     makeUnactive(){
+        this.drawBox.style.display = "none";
         this.active=false;
         this.removeMouseListeners();
     }
 
     addMouseListeners(){
+        delete(this.controller);
+        this.controller = new AbortController();
         this.canvas.addEventListener("mousemove", e => {
             this.findxy('move', e.pageX, e.pageY)
-            socket.emit('draw',{"move": 'move', "x": e.pageX, "y": e.pageY});
-        }, false);
+            socket.emit('drawCanvas',{"move": 'move', "x": e.pageX, "y": e.pageY});
+        }, { signal: this.controller.signal });
         this.canvas.addEventListener("mousedown", e  => {
             this.findxy('down', e.pageX, e.pageY)
-            socket.emit('draw',{"move": 'down', "x": e.pageX, "y": e.pageY});
-        }, false);
+            socket.emit('drawCanvas',{"move": 'down', "x": e.pageX, "y": e.pageY});
+        }, { signal: this.controller.signal });
         this.canvas.addEventListener("mouseup", e =>{
             this.findxy('up', e.pageX, e.pageY)
-            socket.emit('draw',{"move": 'up', "x": e.pageX, "y": e.pageY});
-        }, false);
+            socket.emit('drawCanvas',{"move": 'up', "x": e.pageX, "y": e.pageY});
+        }, { signal: this.controller.signal });
         this.canvas.addEventListener("mouseout", e =>{
             this.findxy('out', e.pageX, e.pageY)
-            socket.emit('draw',{"move": 'out', "x": e.pageX, "y": e.pageY});
-        }, false);
+            socket.emit('drawCanvas',{"move": 'out', "x": e.pageX, "y": e.pageY});
+        }, { signal: this.controller.signal });
+
+        
+        var brushBoxes = this.drawBox.querySelector("#brushColorSelect").children;
+        var bgBoxes = this.drawBox.querySelector("#backgroundColorSelect").children;
+        var btnBox = this.drawBox.querySelector("#drawButtonBox");
+        
+        for (var i = 0; i < brushBoxes.length; i++) {
+            let temp =brushBoxes[i].id;
+            if(temp!=""){
+                brushBoxes[i].addEventListener("click",()=>{
+                    this.color(temp);
+                }, {signal:this.controller.signal});
+            }
+        }
+        for (var i = 0; i < bgBoxes.length; i++) {
+            let temp =bgBoxes[i].id;
+            if(temp!=""){
+                bgBoxes[i].addEventListener("click",()=>{
+                    this.bgColor(temp);
+                }, {signal:this.controller.signal});
+            }
+        }
+        var clearButton = btnBox.querySelector("#clearCanvasButton");
+        clearButton.addEventListener("click",()=>{
+            this.erase();
+        }, {signal:this.controller.signal});
+
+        this.drawSizeSelector.addEventListener("mouseup",()=>{
+            this.drawSize = this.drawSizeSelector.value;
+            this.drawSizeBuffer = this.drawSize;
+            socket.emit("brushSizeCanvas",{"brushSize":this.drawSize});
+        },{signal:this.controller.signal});
     }
 
     removeMouseListeners(){
-        this.canvas.removeEventListener("mousemove", e => {
-            this.findxy('move', e)
-        }, false);
-        this.canvas.removeEventListener("mousedown", e  => {
-            this.findxy('down', e)
-        }, false);
-        this.canvas.removeEventListener("mouseup", e =>{
-            this.findxy('up', e)
-        }, false);
-        this.canvas.removeEventListener("mouseout", e =>{
-            this.findxy('out', e)
-        }, false);
+        this.controller.abort();
     }
 
+    changeDrawSize(value){
+        this.drawSize = value;
+        this.drawSizeBuffer = value;
+    }
 
     color(obj){
         switch (obj) {
@@ -98,10 +138,10 @@ class canvasArea{
                 this.drawColor = this.backgroundColor;
                 break;
         }
-        if (this.drawColor == this.backgroundColor) this.drawSize = 14;
-        else this.drawSize = 2;
+        if (this.drawColor == this.backgroundColor) this.drawSize = canvasArea.eraserSize;
+        else this.drawSize = this.drawSizeBuffer;
         if(this.active){
-            socket.emit('changeColor',{"color":obj});
+            socket.emit('changeColorCanvas',{"color":obj});
         }
     }
 
@@ -134,7 +174,7 @@ class canvasArea{
         this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
         
         if(this.active){
-            socket.emit('changeBgColor',{"backgroundColor":obj});
+            socket.emit('changeBgColorCanvas',{"backgroundColor":obj});
         }
     }
 
@@ -158,6 +198,10 @@ class canvasArea{
 
     eraseImmediate(){
         this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+    }
+
+    isActive(){
+        return this.active;
     }
 
     findxy(move, pageX, pageY) {
@@ -190,5 +234,20 @@ class canvasArea{
                 this.draw();
             }
         }
+    }
+
+    sendImage(){
+        if(this.active){
+            var image = this.ctx.getImageData(0,0,this.canvasWidth,this.canvasHeight);
+            socket.emit('imageSend',{"image":image});
+        }
+    }
+
+    loadImage(){
+        socket.emit('imageRequest',(image)=>{
+            if(!this.active){
+                this.ctx.getImageData(image,0,0);
+            }
+        });
     }
 }

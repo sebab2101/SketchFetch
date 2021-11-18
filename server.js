@@ -15,24 +15,29 @@ server.listen(process.env.PORT || 9020, function() {
 
 
 io.on('connection', (socket) => {
-	socket.on('changeColor', (data) => {
+	socket.on('changeColorCanvas', (data) => {
 		console.log('changeColor: ', data);
-		socket.broadcast.emit('changeColor',data);
+		socket.broadcast.emit('changeColorCanvas',data);
 	});
 
-	socket.on('changeBgColor', (data) => {
+	socket.on('changeBgColorCanvas', (data) => {
 		console.log('changeBgColor: ', data);
-		socket.broadcast.emit('changeBgColor',data);
+		socket.broadcast.emit('changeBgColorCanvas',data);
 	});
 
-	socket.on('draw', (data) => {
+	socket.on('drawCanvas', (data) => {
 		console.log('Draw: ', data);
-		socket.broadcast.emit('draw',data);
+		socket.broadcast.emit('drawCanvas',data);
 	});
 
 	socket.on('clearCanvas', (data) => {
 		console.log('Canvas Cleared: ');
 		socket.broadcast.emit('clearCanvas');
+	});
+
+	socket.on('brushSizeCanvas', (data) => {
+		console.log('Changing brush size: ', data);
+		socket.broadcast.emit('brushSizeCanvas',data);
 	});
 });
 

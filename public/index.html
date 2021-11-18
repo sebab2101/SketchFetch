@@ -1,5 +1,7 @@
 <html>
     <head>
+        <!-- Bootstrap -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
         <!-- Custom CSS -->
         <link rel="stylesheet" href="default.css">
         <!-- Custom favicon for game -->
@@ -10,33 +12,41 @@
             <canvas  id="canvasArea" width="400" height="400" style="border:2px solid;"></canvas>
         </div>
         <div id = "drawBox">
-            <div id = "brushBox">
-                <div>Choose Brush Color</div>
-                <div id="green-brush" class="colorSelectBox" onclick="playerCanvas.color(this.id)"></div>
-                <div id="blue-brush" class="colorSelectBox"  onclick="playerCanvas.color(this.id)"></div>
-                <div id="red-brush" class="colorSelectBox"  onclick="playerCanvas.color(this.id)"></div>
-                <div id="yellow-brush" class="colorSelectBox"  onclick="playerCanvas.color(this.id)"></div>
-                <div id="orange-brush" class="colorSelectBox"  onclick="playerCanvas.color(this.id)"></div>
-                <div id="black-brush" class="colorSelectBox"  onclick="playerCanvas.color(this.id)"></div>
-                <div id="white-brush" class="colorSelectBox"  onclick="playerCanvas.color(this.id)"></div>
-                <div>Eraser</div>
-                <div id="eraser-brush" class="colorSelectBoxBig"  onclick="playerCanvas.color(this.id)"></div>
+            <div id = "drawBrushBox">
+                <div id = "brushColorSelect">
+                    <div>Choose Brush Color</div>
+                    <div id="green-brush" class="colorSelectBox"></div>
+                    <div id="blue-brush" class="colorSelectBox"></div>
+                    <div id="red-brush" class="colorSelectBox"></div>
+                    <div id="yellow-brush" class="colorSelectBox"></div>
+                    <div id="orange-brush" class="colorSelectBox"></div>
+                    <div id="black-brush" class="colorSelectBox"></div>
+                    <div id="white-brush" class="colorSelectBox"></div>
+                    <div>Eraser</div>
+                    <div id="eraser-brush" class="colorSelectBoxBig"></div>
+                </div>
+                <div id = "brushSizeSelect">
+                    <label for="brushSizeRange" class="form-label">Chose Brush Size</label>
+                    <input type="range" class="form-range" min="2" max="14" value="2" step="1" id="brushSizeRange">
+                </div>
             </div>
-                <div id = "backgroundBox">
-                <div>Choose Background</div>
-                <div id="green-bg" class="colorSelectBox" onclick="playerCanvas.bgColor(this.id)"></div>
-                <div id="blue-bg" class="colorSelectBox" onclick="playerCanvas.bgColor(this.id)"></div>
-                <div id="red-bg" class="colorSelectBox" onclick="playerCanvas.bgColor(this.id)"></div>
-                <div id="yellow-bg" class="colorSelectBox" onclick="playerCanvas.bgColor(this.id)"></div>
-                <div id="orange-bg" class="colorSelectBox" onclick="playerCanvas.bgColor(this.id)"></div>
-                <div id="black-bg" class="colorSelectBox" onclick="playerCanvas.bgColor(this.id)"></div>
-                <div id="white-bg" class="colorSelectBox" onclick="playerCanvas.bgColor(this.id)"></div>    
+            <div id = "drawBackgroundBox">
+                <div id = "backgroundColorSelect">
+                    <div>Choose Background Color</div>
+                    <div id="green-bg" class="colorSelectBox"></div>
+                    <div id="blue-bg" class="colorSelectBox"></div>
+                    <div id="red-bg" class="colorSelectBox"></div>
+                    <div id="yellow-bg" class="colorSelectBox"></div>
+                    <div id="orange-bg" class="colorSelectBox"></div>
+                    <div id="black-bg" class="colorSelectBox"></div>
+                    <div id="white-bg" class="colorSelectBox"></div> 
+                </div>   
             </div>
-            <img id="canvasimg" style="position:absolute;top:10%;left:52%;" style="display:none;">
-            <input type="button" value="draw" id="draw-btn" size="30" onclick="beginDraw()">
-            <input type="button" value="clear" id="clr-btn" size="30" onclick="playerCanvas.erase()">
+            <div id="drawButtonBox">
+                <input type="button" value="clear" id="clearCanvasButton" size="30">
+            </div>
         </div>
-        </div>
+        <input type="button" value="draw" id="toggleDrawButton" size="30" onclick="toggleDraw()">
     </body>
     <!-- socket.io client-side script -->
 	<script src="/socket.io/socket.io.js"></script>
