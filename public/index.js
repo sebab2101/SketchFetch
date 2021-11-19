@@ -1,17 +1,40 @@
-import {player,rankList,timer} from './module.js';
+/*
+Client-side js.
+*/
+var socket = io();
 
-let p1=new player("Sebastian",123);
-let p2=new player("Dev",124);
-let p3=new player("Asmod",125);
+var playerCanvas = new canvasArea(false);
 
-let r=new rankList;
+let toggleDraw = () => {
+    console.log("Toggling canvas drawing to ",!playerCanvas.isActive());
+    if(!playerCanvas.isActive()){
+        playerCanvas.makeActive();
+    }else{
+        playerCanvas.makeUnactive();
+    }
+}
+//Socket receive stuff here
+socket.on('drawCanvas', function(data) {
+    console.log("Draw (Client):", data);
+    playerCanvas.findxy(data["move"],data["x"],data["y"]);
+});
 
-r.addPlayer(p1);
-r.addPlayer(p2);
-r.addPlayer(p3);
+socket.on('changeColorCanvas', function(data) {
+    console.log("changeColor (Client):", data);
+    playerCanvas.color(data["color"]);
+});
 
-p1.changeScore(50);
-p2.changeScore(100);
-console.log(r.displayRankList());
-r.sortRankList();
-console.log(r.displayRankList());
+socket.on('changeBgColorCanvas', function(data) {
+    console.log("changeBgColor (Client):", data);
+    playerCanvas.bgColor(data["backgroundColor"]);
+});
+
+socket.on('clearCanvas', function(data) {
+    console.log("Canvas cleared (Client)");
+    playerCanvas.eraseImmediate();
+});
+
+socket.on('brushSizeCanvas', function(data) {
+    console.log("Change Brush size (Client):", data);
+    playerCanvas.changeDrawSize(data["brushSize"]);
+});

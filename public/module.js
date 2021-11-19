@@ -1,4 +1,4 @@
-export class player{  // TESTED
+class player{  // TESTED
   #name;
   #playerId;
   #score;
@@ -56,7 +56,7 @@ export class player{  // TESTED
 
 }
 
-export class rankList{  //TESTED
+class rankList{  //TESTED
   #players;
 
   constructor(){
@@ -92,6 +92,6 @@ export class rankList{  //TESTED
 
 }
 
-export class timer {
+class timer {
 
 }
