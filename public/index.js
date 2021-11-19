@@ -4,6 +4,7 @@ Client-side js.
 var socket = io();
 
 var playerCanvas = new canvasArea(false);
+var t = new timer();
 
 let toggleDraw = () => {
     console.log("Toggling canvas drawing to ",!playerCanvas.isActive());
@@ -38,3 +39,8 @@ socket.on('brushSizeCanvas', function(data) {
     console.log("Change Brush size (Client):", data);
     playerCanvas.changeDrawSize(data["brushSize"]);
 });
+
+
+
+startTimer = ()=>t.startTimer();
+resetTimer = ()=>t.resetTimer();
