@@ -6,12 +6,19 @@
         <link rel="stylesheet" href="default.css">
         <!-- Custom favicon for game -->
         <link href="favicon.ico" rel="icon" type="image/x-icon" />
-        <!-- main custom js -->
-        <script type="module" defer src="./index.js"></script>
     </head>
+    
     <body>
-        <div id="canvas-wrap">
-            <canvas  id="canvasArea" width="400" height="400" style="border:2px solid;"></canvas>
+        <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+            <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">SketchFetch</a>
+        </header>
+        <div class="row mb-2">
+            <div class="col-md-3"></div>
+            <div class="col-md-6" id="canvas-wrap">
+                <div class = "">
+                    <canvas  id="canvasArea"></canvas>
+                </div>
+            </div>
         </div>
         <div id = "drawBox">
             <div id = "drawBrushBox">

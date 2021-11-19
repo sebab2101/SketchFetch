@@ -27,6 +27,9 @@ class canvasArea{
         this.mouseCircle = document.querySelector("#mouseCircle");
         this.ctx = this.canvas.getContext("2d");
         this.ctx.translate(0.5, 0.5);
+
+        this.canvas.width = this.canvas.offsetWidth;
+        this.canvas.height = this.canvas.offsetHeight;
         this.canvasWidth = this.canvas.width;
         this.canvasHeight = this.canvas.height;
         this.active = active;
