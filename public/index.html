@@ -49,6 +49,29 @@
             </div>
         </div>
         <input type="button" value="draw" id="toggleDrawButton" size="30" onclick="toggleDraw()">
+
+
+      <container>
+
+
+      <div class="btn-group">
+
+        <button id="startTimer" onclick="startTimer()">
+          Start
+        </button>
+
+        <button id="resetTimer" onclick="resetTimer()">
+          Reset
+        </button>
+
+      </div>
+
+      <div id="timer">
+
+      </div>
+
+    </container>
+
     </body>
     <!-- socket.io client-side script -->
 	<script src="/socket.io/socket.io.js"></script>
@@ -56,6 +79,7 @@
 	<script src="./scripts/canvasArea.js"></script>
   <script src="./scripts/player.js"></script>
   <script src="./scripts/rankList.js"></script>
+  <script src="./scripts/timer.js"></script>
 	<script src="index.js"></script>
 
 </html>
