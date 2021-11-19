@@ -14,16 +14,20 @@
         </header>
         <div class="row mb-2">
             <div class="col-md-1"></div>
-            <div class="col-md-2"></div>
-            <div class="col-md-6" id="canvas-wrap">
-                <div>
-                    <canvas  id="canvasArea"></canvas>
+            <div class="col-md-2">
+                <div id="RankingLabel" class = "mx-0 mb-2 border rounded-3 roundBlock">
+
                 </div>
             </div>
-            <div class ="col-md-2">
-                <div class = "row mb-2">
+            <div class="col-md-6">
+                <div id="guessProgressBar" class = "row mx-0 mb-2 border rounded-3 roundBlock">
+                    
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div id="timerBox" class = "row mx-0 mb-2 border rounded-3 roundBlock">
                     <div class= "col-md-2"></div>
-                    <div class = "col-md-8 text-monospace text-danger bg-warning text-center" >
+                    <div class = "col-md-8 text-monospace text-center rounded whiteBlack" >
                         <h2 id = "timer">
 
                         </h2>
@@ -31,60 +35,100 @@
                 </div>
             </div>
         </div>
-        <div id = "drawBox">
-            <div id = "drawBrushBox">
-                <div id = "brushColorSelect">
-                    <div>Choose Brush Color</div>
-                    <div id="green-brush" class="colorSelectBox"></div>
-                    <div id="blue-brush" class="colorSelectBox"></div>
-                    <div id="red-brush" class="colorSelectBox"></div>
-                    <div id="yellow-brush" class="colorSelectBox"></div>
-                    <div id="orange-brush" class="colorSelectBox"></div>
-                    <div id="black-brush" class="colorSelectBox"></div>
-                    <div id="white-brush" class="colorSelectBox"></div>
-                    <div>Eraser</div>
-                    <div id="eraser-brush" class="colorSelectBoxBig"></div>
-                </div>
-                <div id = "brushSizeSelect">
-                    <label for="brushSizeRange" class="form-label">Chose Brush Size</label>
-                    <input type="range" class="form-range" min="2" max="14" value="2" step="1" id="brushSizeRange">
+        <div class="row mb-2">
+            <div class="col-md-1"></div>
+            <div class="col-md-2">
+                <div id= "rankBox" class ="row mb-2 mx-0 border rounded-3 roundBlock">
+
                 </div>
             </div>
-            <div id = "drawBackgroundBox">
-                <div id = "backgroundColorSelect">
-                    <div>Choose Background Color</div>
-                    <div id="green-bg" class="colorSelectBox"></div>
-                    <div id="blue-bg" class="colorSelectBox"></div>
-                    <div id="red-bg" class="colorSelectBox"></div>
-                    <div id="yellow-bg" class="colorSelectBox"></div>
-                    <div id="orange-bg" class="colorSelectBox"></div>
-                    <div id="black-bg" class="colorSelectBox"></div>
-                    <div id="white-bg" class="colorSelectBox"></div>
+            <div class="col-md-6" id="canvas-wrap">
+                <div>
+                    <canvas  id="canvasArea"></canvas>
                 </div>
             </div>
-            <div id="drawButtonBox">
-                <input type="button" value="clear" id="clearCanvasButton" size="30">
+            <div class ="col-md-2">
+                <div id= "chatBox" class ="row mb-2 mx-0 border rounded-3 roundBlock">
+
+                </div>
             </div>
         </div>
-        <input type="button" value="draw" id="toggleDrawButton" size="30" onclick="toggleDraw()">
+        <div class = "row mb-2">
+            <div class="col-md-1"></div>
+            <div class="col-md-2"></div>
+            <div  class ="col-md-6">
+                <div id = "drawBox" class="px-0 py-0">
+                    <div id = "drawBrushBox">
+                        <div class="row mx-auto">
+                            <div class="col-md-5">
+                                <div  id="brushColorSelect"  class="row px-2">
+                                    <div  class="whiteBlack">Choose Brush Color</div>
+                                    <div id="green-brush" class="colorSelectBox mx-1"></div>
+                                    <div id="blue-brush" class="colorSelectBox mx-1"></div>
+                                    <div id="red-brush" class="colorSelectBox mx-1"></div>
+                                    <div id="yellow-brush" class="colorSelectBox mx-1"></div>
+                                    <div id="orange-brush" class="colorSelectBox mx-1"></div>
+                                    <div id="black-brush" class="colorSelectBox mx-1"></div>
+                                    <div id="white-brush" class="colorSelectBox mx-1"></div>
+                                </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="row px-2">
+                                <div class="whiteBlack">Eraser</div>
+                                <div id="eraser-brush" class="colorSelectBoxBig mx-1"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div id = "brushSizeSelect">
+                                <label for="brushSizeRange" class="form-label mb-0 whiteBlack">Chose Brush Size</label>
+                                <input type="range" class="form-range" min="2" max="14" value="2" step="1" id="brushSizeRange">
+                            </div>
+                        </div>
+                        </div>
+                        <div id = "drawBackgroundBox">
+                            <div class="row mx-auto">
+                                <div class="col-md-5">
+                                    <div id = "backgroundColorSelect" class="row px-2 pb-4">
+                                        <div class="whiteBlack">Choose Background Color</div>
+                                        <div id="green-bg" class="colorSelectBox mx-1"></div>
+                                        <div id="blue-bg" class="colorSelectBox mx-1"></div>
+                                        <div id="red-bg" class="colorSelectBox mx-1"></div>
+                                        <div id="yellow-bg" class="colorSelectBox mx-1"></div>
+                                        <div id="orange-bg" class="colorSelectBox mx-1"></div>
+                                        <div id="black-bg" class="colorSelectBox mx-1"></div>
+                                        <div id="white-bg" class="colorSelectBox mx-1"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="drawButtonBox">
+                        <div id = "drawButtonSelect" class="row mx-auto">
+                            <div class="col-md-5">
+                                <div class="row px-2 pb-1">
+                                <input type="button" value="clear" id="clearCanvasButton" size="30">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <container>
+            <div class="btn-group">
+                <input type="button" value="draw" id="toggleDrawButton" size="30" onclick="toggleDraw()">
 
+                <button id="startTimer" onclick="startTimer()">
+                Start
+                </button>
 
-      <container>
+                <button id="resetTimer" onclick="resetTimer()">
+                Reset
+                </button>
 
-
-      <div class="btn-group">
-
-        <button id="startTimer" onclick="startTimer()">
-          Start
-        </button>
-
-        <button id="resetTimer" onclick="resetTimer()">
-          Reset
-        </button>
-
-      </div>
-
-    </container>
+            </div>
+        </container>
 
     </body>
     <!-- socket.io client-side script -->

@@ -85,6 +85,11 @@ class canvasArea{
                 }, {signal:this.controller.signal});
             }
         }
+        this.drawBox.querySelector("#eraser-brush").addEventListener("click",()=>{
+            this.color("eraser-brush");
+        },{signal:this.controller.signal});
+        
+
         for (var i = 0; i < bgBoxes.length; i++) {
             let temp =bgBoxes[i].id;
             if(temp!=""){
