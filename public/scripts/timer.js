@@ -1,7 +1,6 @@
 class timer {
-  #defaultTime=10;
+  #defaultTime=30;
   #seconds;
-  #timerSeconds;
   #interval;
   #counter;
 
@@ -9,18 +8,18 @@ class timer {
       this.#seconds = this.#defaultTime;
       this.#interval = null;
       this.#counter = false;
-      document.getElementById("timer").innerHTML = this.#defaultTime;
+      document.getElementById("timer").innerText = this.#defaultTime;
    }
 
    runTimer() {
 
      this.#seconds--;
-     document.getElementById("timer").innerHTML = this.#seconds;
+     document.getElementById("timer").innerText = this.#seconds;
 
      if(this.#seconds<1) {
        window.clearInterval(this.#interval);
        this.#counter = false;
-       document.getElementById("timer").innerHTML = "Time's up";
+       document.getElementById("timer").innerText = "Time's up";
      }
 
    }
@@ -29,12 +28,12 @@ class timer {
 
      if (this.#counter === false) {
        this.#interval = window.setInterval(() => this.runTimer(),1000);
-       document.getElementById("startTimer").innerHTML = "Stop";
+       document.getElementById("startTimer").innerText = "Stop";
        this.#counter = true;
 
      } else {
        window.clearInterval(this.#interval);
-       document.getElementById("startTimer").innerHTML = "Start";
+       document.getElementById("startTimer").innerText = "Start";
        this.#counter = false;
      }
 
