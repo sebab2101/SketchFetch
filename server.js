@@ -3,6 +3,7 @@ var http = require('http');
 var express = require('express');
 var socket_io = require('socket.io');
 var fs = require('fs');
+const { SocketAddress } = require('net');
 
 // Create app var from express, point it towards the public directory to serve up assets
 var app = express();
@@ -23,6 +24,7 @@ server.listen(process.env.PORT || 9020, function() {
 io.on('connection', (socket) => {
 
 	console.log('A client is connected!');
+
 	socket.on('changeColorCanvas', (data) => {
 		console.log('changeColor: ', data);
 		socket.broadcast.emit('changeColorCanvas',data);

@@ -3,23 +3,33 @@ class timer {
   #seconds;
   #interval;
   #counter;
-
+  timerBox;
+  timer;
   constructor() {
+      this.timerBox= document.querySelector("#timerBox");
+      this.timer= this.timerBox.querySelector("#timer");
       this.#seconds = this.#defaultTime;
       this.#interval = null;
       this.#counter = false;
-      document.getElementById("timer").innerText = this.#defaultTime;
+      this.timer.innerText = this.#defaultTime;
    }
 
    runTimer() {
 
      this.#seconds--;
-     document.getElementById("timer").innerText = this.#seconds;
-
      if(this.#seconds<1) {
        window.clearInterval(this.#interval);
        this.#counter = false;
-       document.getElementById("timer").innerText = "Time's up";
+       this.timer.innerText = "Time's up";
+       this.timerBox.style.background = `yellow`;
+     }else{
+       this.timer.innerText = this.#seconds;
+       this.timerBox.style.background = `linear-gradient(
+          to right,
+          green ` + this.#seconds*100/this.#defaultTime +`%,
+          transparent 0%,
+          transparent 100%
+        )`;
      }
 
    }
@@ -43,8 +53,10 @@ class timer {
     resetTimer() {
       window.clearInterval(this.#interval);
       this.#seconds = this.#defaultTime;
-      document.getElementById("timer").innerHTML = this.#defaultTime;
+      this.timer.innerHTML = this.#defaultTime;
+      this.timerBox.style.background = `green`;
       document.getElementById("startTimer").innerHTML = "Start"
+      
   }
 
 }

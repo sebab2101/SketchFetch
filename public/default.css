@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Righteous&display=swap');
+
+
 #canvasArea
 {
     cursor: crosshair;
@@ -84,12 +87,10 @@ body {
 }
 
 #timerBox{
-    background-color:rgb(49, 209, 49,0.6);
-    font-family: monospace;
+    font-family: "Righteous", sans-serif;
+    font-size: 2.5vw;
     color:red;
-    border: 2px;
-    border-radius: 5;
-
+    background-color: green;
 }
 
 .whiteBlack {
@@ -100,5 +101,42 @@ body {
 .roundBlock{
     background-color:rgba(138, 43, 226,0.9);
     height:100%;
+
+}
+
+
+/* Sketchfetch logo animation*/
+
+.rainbow {
+    text-align: center;
+    font-size: 2.5vw;
+    font-family: "Righteous",sans-serif;
     
 }
+.rainbow_text_animated {
+    background: linear-gradient(to right, #6666ff, #0099ff , #00ff00, #ff3399, #6666ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: rainbow_animation 6s ease-in-out infinite;
+    background-size: 400% 100%;
+}
+.rainbow_box_animated {
+    
+    animation: rainbow_animation 6s ease-in-out infinite;
+    background-size: 100% 400%;
+}
+
+
+@keyframes rainbow_animation {
+    0%,100% {
+        background-position: 0 0;
+        transform: rotate(3deg);
+    }
+
+    50% {
+        background-position: 100% 0;
+        transform: rotate(-3deg);
+    }
+}
+  /* end animation */

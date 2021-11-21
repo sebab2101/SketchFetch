@@ -17,7 +17,7 @@ let toggleDraw = () => {
 //Socket receive stuff here
 socket.on('drawCanvas', function(data) {
     console.log("Draw (Client):", data);
-    playerCanvas.findxy(data["move"],data["x"],data["y"]);
+    playerCanvas.findxy(data["move"],data["x"],data["y"],data["orgWidth"]);
 });
 
 socket.on('changeColorCanvas', function(data) {
@@ -44,3 +44,10 @@ socket.on('brushSizeCanvas', function(data) {
 
 startTimer = ()=>t.startTimer();
 resetTimer = ()=>t.resetTimer();
+
+
+//window resize event
+window.addEventListener('resize', ()=>{
+    console.log("resizing window!");
+    playerCanvas.dimensionSet();
+});

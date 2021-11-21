@@ -9,14 +9,13 @@
     </head>
     
     <body>
-        <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-            <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">SketchFetch</a>
-        </header>
         <div class="row mb-2">
             <div class="col-md-1"></div>
             <div class="col-md-2">
-                <div id="RankingLabel" class = "mx-0 mb-2 border rounded-3 roundBlock">
-
+                <div id="SketchFetchLogo" class = "mx-0 mb-2 roundBlock d-flex justify-content-center  border rounded-3  ">
+                    <div class="rainbow rainbow_text_animated" data-shadow="SketchFetch">
+                        SketchFetch
+                    </div>
                 </div>
             </div>
             <div class="col-md-6">
@@ -25,12 +24,11 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <div id="timerBox" class = "row mx-0 mb-2 border rounded-3 roundBlock">
-                    <div class= "col-md-2"></div>
-                    <div class = "col-md-8 text-monospace text-center rounded whiteBlack" >
-                        <h2 id = "timer">
+                <div class = "row mx-0 mb-2 border rounded-3 roundBlock">
+                    <div id="timerBox" class = " text-center" >
+                        <p id = "timer" class="my-0">
 
-                        </h2>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -43,7 +41,7 @@
                 </div>
             </div>
             <div class="col-md-6" id="canvas-wrap">
-                <div>
+                <div class ="ratio ratio-4x3 ">
                     <canvas  id="canvasArea"></canvas>
                 </div>
             </div>

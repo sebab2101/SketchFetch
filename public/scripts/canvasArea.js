@@ -1,9 +1,11 @@
 
 class canvasArea{
     canvas;
-    canvasWidth;
-    canvasHeight;
+    canvasWidth=0;
+    canvasHeight=0;
     ctx;
+    canvasOffsetLeft;
+    canvasOffsetTop;
     drawBox;
     drawSizeSelector;
     prevX = 0;
@@ -15,6 +17,7 @@ class canvasArea{
     drawSizeBuffer = 2;
     static eraserSize = 14;
     dot_flag = false;
+    //Captures is player is drawing or not.
     flag = false;
     backgroundColor = "white";
     active = false;
@@ -22,20 +25,28 @@ class canvasArea{
     constructor(active){
         this.drawBox = document.querySelector("#drawBox");
         this.drawSizeSelector = this.drawBox.querySelector("#brushSizeRange");
-        this.drawBox.style.display = "none";
         this.canvas = document.querySelector("#canvasArea");
-        this.mouseCircle = document.querySelector("#mouseCircle");
         this.ctx = this.canvas.getContext("2d");
-        this.ctx.translate(0.5, 0.5);
+        this.drawBox.style.display = "none";
+        this.active = active;
+        this.dimensionSet();
+        if(this.active){
+            this.addMouseListeners();
+        }
+    }
 
+    dimensionSet(){
+        //setting up dimensions and co-ordinate system 
+
+        let imageObject = this.sendImage();
+        this.canvasOffsetLeft=this.canvas.offsetParent.offsetLeft;
+        this.canvasOffsetTop=this.canvas.offsetParent.offsetTop;
         this.canvas.width = this.canvas.offsetWidth;
         this.canvas.height = this.canvas.offsetHeight;
         this.canvasWidth = this.canvas.width;
         this.canvasHeight = this.canvas.height;
-        this.active = active;
-        if(this.active){
-            this.addMouseListeners();
-        }
+
+        this.loadImage(imageObject);
     }
 
     makeActive(){
@@ -56,20 +67,30 @@ class canvasArea{
         delete(this.controller);
         this.controller = new AbortController();
         this.canvas.addEventListener("mousemove", e => {
-            this.findxy('move', e.pageX, e.pageY)
-            socket.emit('drawCanvas',{"move": 'move', "x": e.pageX, "y": e.pageY});
+            let pageX = e.pageX-this.canvasOffsetLeft;
+            let pageY = e.pageY-this.canvasOffsetTop;
+            this.findxy('move', pageX, pageY,this.canvasWidth)
+            if(this.flag)
+                socket.emit('drawCanvas',{"move": 'move', "x": pageX, "y": pageY, "orgWidth": this.canvasWidth});
         }, { signal: this.controller.signal });
         this.canvas.addEventListener("mousedown", e  => {
-            this.findxy('down', e.pageX, e.pageY)
-            socket.emit('drawCanvas',{"move": 'down', "x": e.pageX, "y": e.pageY});
+            let pageX = e.pageX-this.canvasOffsetLeft;
+            let pageY = e.pageY-this.canvasOffsetTop;
+            this.findxy('down', pageX, pageY,this.canvasWidth)
+            socket.emit('drawCanvas',{"move": 'down', "x": pageX, "y": pageY, "orgWidth": this.canvasWidth});
         }, { signal: this.controller.signal });
         this.canvas.addEventListener("mouseup", e =>{
-            this.findxy('up', e.pageX, e.pageY)
-            socket.emit('drawCanvas',{"move": 'up', "x": e.pageX, "y": e.pageY});
+            let pageX = e.pageX-this.canvasOffsetLeft;
+            let pageY = e.pageY-this.canvasOffsetTop;
+            this.findxy('up', pageX, pageY,this.canvasWidth)
+            socket.emit('drawCanvas',{"move": 'up', "x": pageX, "y": pageY, "orgWidth": this.canvasWidth});
         }, { signal: this.controller.signal });
         this.canvas.addEventListener("mouseout", e =>{
-            this.findxy('out', e.pageX, e.pageY)
-            socket.emit('drawCanvas',{"move": 'out', "x": e.pageX, "y": e.pageY});
+            let pageX = e.pageX-this.canvasOffsetLeft;
+            let pageY = e.pageY-this.canvasOffsetTop;
+            this.findxy('out', pageX, pageY,this.canvasWidth)
+            if(this.flag)
+                socket.emit('drawCanvas',{"move": 'out', "x": pageX, "y": pageY, "orgWidth": this.canvasWidth});
         }, { signal: this.controller.signal });
 
 
@@ -212,12 +233,12 @@ class canvasArea{
         return this.active;
     }
 
-    findxy(move, pageX, pageY) {
+    findxy(move, pageX, pageY,orgWidth) {
         if (move == 'down') {
             this.prevX = this.currX;
             this.prevY = this.currY;
-            this.currX = pageX - this.canvas.offsetLeft;
-            this.currY = pageY - this.canvas.offsetTop;
+            this.currX = pageX * (this.canvasWidth/orgWidth);
+            this.currY = pageY * (this.canvasWidth/orgWidth);
 
             this.flag = true;
 
@@ -225,7 +246,9 @@ class canvasArea{
             if (this.dot_flag) {
                 this.ctx.beginPath();
                 this.ctx.fillStyle = this.drawColor;
-                this.ctx.fillRect(this.currX, this.currY, 2, 2);
+                //make pixel wrt to the brushsize and color
+                let halfPix = -this.drawSize/2;
+                this.ctx.fillRect(this.currX-halfPix, this.currY-halfPix, halfPix, halfPix);
                 this.ctx.closePath();
                 this.dot_flag = false;
             }
@@ -237,25 +260,23 @@ class canvasArea{
             if (this.flag) {
                 this.prevX = this.currX;
                 this.prevY = this.currY;
-                this.currX = pageX - this.canvas.offsetLeft;
-                this.currY = pageY - this.canvas.offsetTop;
+                this.currX = pageX * (this.canvasWidth/orgWidth);
+                this.currY = pageY * (this.canvasWidth/orgWidth);
                 this.draw();
             }
         }
     }
 
     sendImage(){
-        if(this.active){
-            var image = this.ctx.getImageData(0,0,this.canvasWidth,this.canvasHeight);
-            socket.emit('imageSend',{"image":image});
-        }
+        let imageObject=new Image();
+        imageObject.src= this.canvas.toDataURL();
+        return imageObject;
     }
 
-    loadImage(){
-        socket.emit('imageRequest',(image)=>{
-            if(!this.active){
-                this.ctx.getImageData(image,0,0);
-            }
-        });
+    loadImage(imageObject){
+        imageObject.onload= ()=>{
+            this.ctx.drawImage(imageObject,0,0,this.canvasWidth,this.canvasHeight);
+        }   
     }
 }
+
