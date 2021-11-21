@@ -477,4 +477,34 @@ class wordList{
             "needle",
             "bun"
         ];
+
+        constructor(){
+
+        }
+
+        randomWordPick(){
+            let wordsLength = this.words.length;
+            
+            var randomWords1 = this.words[Math.floor(Math.random()*this.words.length)],randomWords2,randomWords3;
+
+            if (wordsLength > 1) {
+                do {
+                  randomWords2 = this.words[Math.floor(Math.random() * wordsLength)];
+                } while(randomWords1 == randomWords2);
+
+            }
+
+
+            if (wordsLength > 1) {
+                do {
+                    randomWords3 = this.words[Math.floor(Math.random() * wordsLength)];
+                } while(randomWords3 == randomWords2);
+
+
+            }
+
+            return [randomWords1, randomWords2, randomWords3];
+        }
 }
+
+module.exports= wordList;

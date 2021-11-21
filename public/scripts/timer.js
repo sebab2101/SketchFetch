@@ -59,4 +59,12 @@ class timer {
       
   }
 
+  getTime(){
+    return this.#seconds;
+  }
+
+  getDefaultTime(){
+    return this.#defaultTime;
+  }
+
 }
