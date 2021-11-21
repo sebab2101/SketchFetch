@@ -2,11 +2,14 @@ class game{
   rankList;
   canvas;
   timer;
-
+  guessProgress;
+  chat;
   constructor() {
     this.canvas = new canvasArea(false);
     this.timer = new timer();
     this.rankList = new rankList();
+    this.guessProgress = new guessProgress(this.timer);
+    this.chat = new chatArea();
   }
 
   startGame() {

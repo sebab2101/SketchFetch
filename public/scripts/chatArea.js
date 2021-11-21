@@ -4,11 +4,18 @@ class chatArea{
     chatForm;
     chatInput;
     constructor(){
+<<<<<<< Updated upstream
         chatBox = document.querySelector("#chatBox");
         chatMessages = chatBox.querySelector("#");
         chatInput = chatBox.querySelector("#");
         chatForm = chatBox.querySelector("#");
         this.addListeners();
+=======
+        this.chatBox = document.querySelector("#chatBox");
+        this.chatMessages = chatBox.querySelector("#chatMessages");
+        this.chatInput = chatBox.querySelector("#chatInput");
+        this.chatForm = chatBox.querySelector("#chatForm");
+>>>>>>> Stashed changes
     }
 
     addMessage(msg){

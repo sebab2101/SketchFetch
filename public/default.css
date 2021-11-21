@@ -133,6 +133,7 @@ body {
 #guessWord {
     font-family: monospace;
     letter-spacing: 1rem;
+    text-transform: uppercase;
 }
 
 /* Sketchfetch logo animation*/

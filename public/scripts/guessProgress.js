@@ -17,8 +17,13 @@ class guessProgress{
         this.guessWordArea.innerText = this.guessWord;
     }
 
-    updateGuessWord(pos,letter){
+    updateLetter(pos,letter){
         this.guessWord = this.guessWord.substr(0,pos-1) + letter + this.guessWord.substr(pos);
+        this.guessWordArea.innerText = this.guessWord;
+    }
+
+    updateGuessWord(word){
+        this.guessWord = word
         this.guessWordArea.innerText = this.guessWord;
     }
 

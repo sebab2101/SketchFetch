@@ -5,7 +5,6 @@ var socket = io();
 
 
 var g = new game();
-var gp = new guessProgress(g.timer);
 
 let toggleDraw = () => {
     console.log("Toggling canvas drawing to ",!g.canvas.isActive());
