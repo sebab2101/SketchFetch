@@ -9,10 +9,12 @@ const wordListClass = require('./wordList.js');
 // Create app var from express, point it towards the public directory to serve up assets
 var app = express();
 app.use(express.static('public'));
-var server = http.Server(app); 
+var server = http.Server(app);
 const wordList = new wordListClass();
-console.log(wordList.randomWordPick())
+console.log(wordList.randomWordPick());
 console.log("Loaded index file");
+
+
 
 
 var io = socket_io(server);
