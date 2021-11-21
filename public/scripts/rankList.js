@@ -32,4 +32,11 @@ class rankList{  //TESTED
     return ranking;
   }
 
+  resetRankList() {
+    for (var i=0;i<this.#players.length;i++)
+    {
+      this.#players[i].resetScore();
+    }
+  }
+
 }

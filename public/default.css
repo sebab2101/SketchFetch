@@ -126,6 +126,14 @@ body {
     padding: 0;
 }
 
+#guessProgressBox{
+    font-size: 2.5vw;
+}
+
+#guessWord {
+    font-family: monospace;
+    letter-spacing: 1rem;
+}
 
 /* Sketchfetch logo animation*/
 
