@@ -9,10 +9,14 @@ const { SocketAddress } = require('net');
 var app = express();
 app.use(express.static('public'));
 
-var server = http.Server(app);   //how this happened?
+var server = http.Server(app);
+
+
 
 
 console.log("Loaded index file");
+
+
 
 
 var io = socket_io(server);
