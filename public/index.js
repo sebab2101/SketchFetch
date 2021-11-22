@@ -5,6 +5,7 @@ var socket = io();
 var g;
 var splash = new splashscreen();
 function addListeners(){
+
     splash.loginForm.addEventListener('submit',(e)=>{
         e.preventDefault();
         if (splash.nameInput.value) {
@@ -12,6 +13,13 @@ function addListeners(){
             splash.splashZone.style.display = "none";
             splash.unsplashZone.style.display = "block";
             splash.nameInput.value = '';
+
+            //window resize event
+            window.addEventListener('resize', ()=>{
+                console.log("resizing window!");
+                g.canvas.dimensionSet();
+            });
+        
         }
     });
 }
@@ -35,8 +43,8 @@ socket.on('connected', function (data) {
 });
 
 socket.on('newPlayer',function (data){
-    console.log('New player! (Client) Name: ', userName, "; Id: ", gameId);
-    p = new Player(data['username'],data['gameId']);
+    console.log('New player! (Client): ', data);
+    p = new player(data['userName'],data['gameId']);
     g.rankList.addPlayer(p);
 });
 
@@ -77,8 +85,3 @@ startTimer = ()=>g.timer.startTimer();
 resetTimer = ()=>g.timer.resetTimer();
 
 
-//window resize event
-window.addEventListener('resize', ()=>{
-    console.log("resizing window!");
-    g.canvas.dimensionSet();
-});

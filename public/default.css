@@ -102,7 +102,7 @@ body {
     /* background-color:rgba(138, 43, 226,0.9); */
     background-color: rgba(0, 0, 0, 0.5);
     height:100%;
-    
+
 }
 
 #chatForm{
@@ -146,8 +146,11 @@ body {
 #chatMessages {
     list-style-type: none;
     margin: 0;
-    padding: 0;
+    padding: 0.4rem;
 }
+
+#chatMessages> li { background: white; }
+#chatMessages> li:nth-child(odd) { background: lightgrey; }
 
 #guessProgressBox{
     font-size: 2.5vw;
@@ -174,6 +177,9 @@ body {
     color: transparent;
     animation: rainbow_animation 6s ease-in-out infinite;
     background-size: 400% 100%;
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: black;
+    
 }
 .rainbow_box_animated {
     

@@ -11,7 +11,7 @@ class rankList{  //TESTED
 
   removePlayer(playerId_par) {
     var position = this.#players.findIndex(function(player) {
-      return player.getPlayerId == playerId_par
+      return player.getPlayerId == playerId_par;
     });
 
     if ( ~position ) this.#players.splice(position, 1); //check if the player with given id exists
@@ -42,8 +42,8 @@ class rankList{  //TESTED
   getUsername(gameId){
     for (var i=0;i<this.#players.length;i++)
     {
-      if(this.#players[i].getPlayerId() == gameId){
-        return this.#players[i].getName();
+      if(this.#players[i].getPlayerId == gameId){
+        return this.#players[i].getName;
       }
     }
     return null;

@@ -14,7 +14,7 @@ class game{
       this.guessProgress = new guessProgress(this.timer);
       this.player = new player(userName,response['gameId']);
       this.rankList.addPlayer(this.player);
-      this.chat = new chatArea(response['gameId']);
+      this.chat = new chatArea(response['gameId'],this.rankList);
     });
   }
 

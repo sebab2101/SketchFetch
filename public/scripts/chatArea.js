@@ -4,18 +4,20 @@ class chatArea{
     chatForm;
     chatInput;
     gameId;
-    constructor(myId){
+    rankList;
+    constructor(myId,myList){
         this.chatBox = document.querySelector("#chatBox");
         this.chatMessages = chatBox.querySelector("#chatMessages");
         this.chatInput = chatBox.querySelector("#chatInput");
         this.chatForm = chatBox.querySelector("#chatForm");
         this.gameId = myId;
+        this.rankList = myList;
         this.addListeners();
     }
 
     addMessage(userName, msg){
         var item = document.createElement('li');
-        item.textContent = userName +": " + msg;
+        item.innerHTML = "<b>" +userName+ ": </b> " + msg;
         this.chatMessages.appendChild(item);
         // window.scrollTo(0, document.body.scrollHeight);
     }
@@ -23,7 +25,7 @@ class chatArea{
         this.chatForm.addEventListener('submit', (e) => {
             e.preventDefault();
             if (this.chatInput.value) {
-              this.addMessage("boi",this.chatInput.value);
+              this.addMessage(this.rankList.getUsername(this.gameId),this.chatInput.value);
               socket.emit('chatMessage', {"gameId":this.gameId, "message":this.chatInput.value});
               this.chatInput.value = '';
             }
