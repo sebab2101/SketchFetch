@@ -23,9 +23,21 @@ server.listen(process.env.PORT || 9020, function() {
 });
 
 
-io.on('connection', (socket) => {
 
+io.on('connection', (socket) => {
 	console.log('A client is connected!');
+	socket.on('newPlayer',(userName,callback) =>{
+		let gameId = Math.random().toString(16).slice(2);
+		console.log('Name: ', userName, "; Id: ", gameId);
+		socket.broadcast.emit('newPlayer',{'userName':userName,'gameId':gameId});
+		callback({
+			"gameId": gameId
+		});
+	});
+	
+	socket.on('disconnect', ()=>{
+		console.log('A client disconnected!');
+	})
 
 	socket.on('changeColorCanvas', (data) => {
 		console.log('changeColor: ', data);
@@ -50,5 +62,10 @@ io.on('connection', (socket) => {
 	socket.on('brushSizeCanvas', (data) => {
 		console.log('Changing brush size: ', data);
 		socket.broadcast.emit('brushSizeCanvas',data);
+	});
+
+	socket.on('chatMessage',(data)=>{
+		console.log('Sending chat message: ', data);
+		socket.broadcast.emit('chatMessage',data);
 	});
 });

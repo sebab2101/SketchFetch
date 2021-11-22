@@ -39,4 +39,13 @@ class rankList{  //TESTED
     }
   }
 
+  getUsername(gameId){
+    for (var i=0;i<this.#players.length;i++)
+    {
+      if(this.#players[i].getPlayerId() == gameId){
+        return this.#players[i].getName();
+      }
+    }
+    return null;
+  }
 }

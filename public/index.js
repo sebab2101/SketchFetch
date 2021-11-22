@@ -2,9 +2,20 @@
 Client-side js.
 */
 var socket = io();
-
-
-var g = new game();
+var g;
+var splash = new splashscreen();
+function addListeners(){
+    splash.loginForm.addEventListener('submit',(e)=>{
+        e.preventDefault();
+        if (splash.nameInput.value) {
+            g = new game(splash.nameInput.value)
+            splash.splashZone.style.display = "none";
+            splash.unsplashZone.style.display = "block";
+            splash.nameInput.value = '';
+        }
+    });
+}
+addListeners();
 
 let toggleDraw = () => {
     console.log("Toggling canvas drawing to ",!g.canvas.isActive());
@@ -15,6 +26,20 @@ let toggleDraw = () => {
     }
 }
 //Socket receive stuff here
+socket.on('error', function (e) {
+    console.error('Connection Error:', e);
+});
+
+socket.on('connected', function (data) {
+    console.log('Socket connected (client side):', data);
+});
+
+socket.on('newPlayer',function (data){
+    console.log('New player! (Client) Name: ', userName, "; Id: ", gameId);
+    p = new Player(data['username'],data['gameId']);
+    g.rankList.addPlayer(p);
+});
+
 socket.on('drawCanvas', function(data) {
     console.log("Draw (Client):", data);
     g.canvas.findxy(data["move"],data["x"],data["y"],data["orgWidth"]);
@@ -40,7 +65,13 @@ socket.on('brushSizeCanvas', function(data) {
     g.canvas.changeDrawSize(data["brushSize"]);
 });
 
-
+socket.on('chatMessage', function(data){
+    console.log("Message received (Client):", data);
+    let userName = g.rankList.getUsername(data['gameId']);
+    if(userName != null){
+        g.chat.addMessage(userName,data['message']);
+    }
+});
 
 startTimer = ()=>g.timer.startTimer();
 resetTimer = ()=>g.timer.resetTimer();

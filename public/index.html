@@ -9,142 +9,157 @@
     </head>
 
     <body>
-        <div class="row mb-2">
-            <div class="col-md-1"></div>
-            <div class="col-md-2">
-                <div id="SketchFetchLogo" class = "mx-0 mb-2 roundBlock d-flex justify-content-center  border rounded-3  ">
-                    <div class="rainbow rainbow_text_animated" data-shadow="SketchFetch">
-                        SketchFetch
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div id="guessProgressBox" class = "row mx-0 mb-2 border rounded-3 roundBlock">
-                    <div id ="guessWord" class="my-0 text-center align-self-middle">
-
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class = "row mx-0 mb-2 border rounded-3 roundBlock">
-                    <div id="timerBox" class = " text-center" >
-                        <p id = "timer" class="my-0">
-
-                        </p>
+        <div id="splash" class= "container-fluid">
+            <div class = "row">
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+                    <div class= "roundBlock border rounded-3 my-2">
+                        <form id="loginForm" action="" class="align-self-end">
+                            <input class= "form-control" placeholder= "Username" id="nameInput" autocomplete="off" />
+                            <button type="button" class="btn btn-success btn-sm">Join Game</button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="row mb-2">
-            <div class="col-md-1"></div>
-            <div class="col-md-2">
-                <div id= "rankBox" class ="row mb-2 mx-0 border rounded-3 roundBlock">
-
+        <div id = "unsplash" style = "display: none">
+            <div class="row mb-2">
+                <div class="col-md-1"></div>
+                <div class="col-md-2">
+                    <div id="SketchFetchLogo" class = "mx-0 mb-2 roundBlock d-flex justify-content-center  border rounded-3  ">
+                        <div class="rainbow rainbow_text_animated" data-shadow="SketchFetch">
+                            SketchFetch
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div id="guessProgressBox" class = "row mx-0 mb-2 border rounded-3 roundBlock">
+                        <div id ="guessWord" class="my-0 text-center align-self-middle">
+    
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class = "row mx-0 mb-2 border rounded-3 roundBlock">
+                        <div id="timerBox" class = " text-center" >
+                            <p id = "timer" class="my-0">
+    
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-6" id="canvas-wrap">
-                <div class ="ratio ratio-4x3 ">
-                    <canvas  id="canvasArea"></canvas>
+            <div class="row mb-2">
+                <div class="col-md-1"></div>
+                <div class="col-md-2">
+                    <div id= "rankBox" class ="row mb-2 mx-0 border rounded-3 roundBlock">
+    
+                    </div>
+                </div>
+                <div class="col-md-6" id="canvas-wrap">
+                    <div class ="ratio ratio-4x3 ">
+                        <canvas  id="canvasArea"></canvas>
+                    </div>
+                </div>
+                <div class ="col-md-2">
+                    <div id= "chatBox" class ="row mb-2 mx-0 border rounded-3 roundBlock">
+                        <ul id="chatMessages"></ul>
+                        <form id="chatForm" action="" class="align-self-end">
+                            <input class= "form-control" id="chatInput" autocomplete="off" />
+                            <button type="button" class="btn btn-success btn-sm">&gt;</button>
+                        </form>
+                    </div>
                 </div>
             </div>
-            <div class ="col-md-2">
-                <div id= "chatBox" class ="row mb-2 mx-0 border rounded-3 roundBlock">
-                    <ul id="chatMessages"></ul>
-                    <from id="chatForm" class="align-self-end">
-                        <input class= "form-control" id="chatInput" autocomplete="off" />
-                        <button class="btn btn-success btn-sm">&gt;</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <div class = "row mb-2">
-            <div class="col-md-1"></div>
-            <div class="col-md-2"></div>
-            <div  class ="col-md-6">
-                <div id = "drawBox" class="px-0 py-0">
-                    <div id = "drawBrushBox">
-                        <div class="row mx-auto">
-                            <div class="col-md-5">
-                                <div  id="brushColorSelect"  class="row px-2">
-                                    <div  class="whiteBlack">Choose Brush Color</div>
-                                    <div id="green-brush" class="colorSelectBox mx-1"></div>
-                                    <div id="blue-brush" class="colorSelectBox mx-1"></div>
-                                    <div id="red-brush" class="colorSelectBox mx-1"></div>
-                                    <div id="yellow-brush" class="colorSelectBox mx-1"></div>
-                                    <div id="orange-brush" class="colorSelectBox mx-1"></div>
-                                    <div id="black-brush" class="colorSelectBox mx-1"></div>
-                                    <div id="white-brush" class="colorSelectBox mx-1"></div>
-                                </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="row px-2">
-                                <div class="whiteBlack">Eraser</div>
-                                <div id="eraser-brush" class="colorSelectBoxBig mx-1"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-5">
-                            <div id = "brushSizeSelect">
-                                <label for="brushSizeRange" class="form-label mb-0 whiteBlack">Chose Brush Size</label>
-                                <input type="range" class="form-range" min="2" max="14" value="2" step="1" id="brushSizeRange">
-                            </div>
-                        </div>
-                        </div>
-                        <div id = "drawBackgroundBox">
+            <div class = "row mb-2">
+                <div class="col-md-1"></div>
+                <div class="col-md-2"></div>
+                <div  class ="col-md-6">
+                    <div id = "drawBox" class="px-0 py-0">
+                        <div id = "drawBrushBox">
                             <div class="row mx-auto">
                                 <div class="col-md-5">
-                                    <div id = "backgroundColorSelect" class="row px-2 pb-4">
-                                        <div class="whiteBlack">Choose Background Color</div>
-                                        <div id="green-bg" class="colorSelectBox mx-1"></div>
-                                        <div id="blue-bg" class="colorSelectBox mx-1"></div>
-                                        <div id="red-bg" class="colorSelectBox mx-1"></div>
-                                        <div id="yellow-bg" class="colorSelectBox mx-1"></div>
-                                        <div id="orange-bg" class="colorSelectBox mx-1"></div>
-                                        <div id="black-bg" class="colorSelectBox mx-1"></div>
-                                        <div id="white-bg" class="colorSelectBox mx-1"></div>
+                                    <div  id="brushColorSelect"  class="row px-2">
+                                        <div  class="whiteBlack">Choose Brush Color</div>
+                                        <div id="green-brush" class="colorSelectBox mx-1"></div>
+                                        <div id="blue-brush" class="colorSelectBox mx-1"></div>
+                                        <div id="red-brush" class="colorSelectBox mx-1"></div>
+                                        <div id="yellow-brush" class="colorSelectBox mx-1"></div>
+                                        <div id="orange-brush" class="colorSelectBox mx-1"></div>
+                                        <div id="black-brush" class="colorSelectBox mx-1"></div>
+                                        <div id="white-brush" class="colorSelectBox mx-1"></div>
+                                    </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="row px-2">
+                                    <div class="whiteBlack">Eraser</div>
+                                    <div id="eraser-brush" class="colorSelectBoxBig mx-1"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div id = "brushSizeSelect">
+                                    <label for="brushSizeRange" class="form-label mb-0 whiteBlack">Chose Brush Size</label>
+                                    <input type="range" class="form-range" min="2" max="14" value="2" step="1" id="brushSizeRange">
+                                </div>
+                            </div>
+                            </div>
+                            <div id = "drawBackgroundBox">
+                                <div class="row mx-auto">
+                                    <div class="col-md-5">
+                                        <div id = "backgroundColorSelect" class="row px-2 pb-4">
+                                            <div class="whiteBlack">Choose Background Color</div>
+                                            <div id="green-bg" class="colorSelectBox mx-1"></div>
+                                            <div id="blue-bg" class="colorSelectBox mx-1"></div>
+                                            <div id="red-bg" class="colorSelectBox mx-1"></div>
+                                            <div id="yellow-bg" class="colorSelectBox mx-1"></div>
+                                            <div id="orange-bg" class="colorSelectBox mx-1"></div>
+                                            <div id="black-bg" class="colorSelectBox mx-1"></div>
+                                            <div id="white-bg" class="colorSelectBox mx-1"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div id="drawButtonBox">
+                            <div id = "drawButtonSelect" class="row mx-auto">
+                                <div class="col-md-5">
+                                    <div class="row px-2 pb-1">
+                                    <input type="button" value="clear" id="clearCanvasButton" size="30">
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <div id="drawButtonBox">
-                        <div id = "drawButtonSelect" class="row mx-auto">
-                            <div class="col-md-5">
-                                <div class="row px-2 pb-1">
-                                <input type="button" value="clear" id="clearCanvasButton" size="30">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
+            <container>
+                <div class="btn-group">
+                    <input type="button" value="draw" id="toggleDrawButton" size="30" onclick="toggleDraw()">
+    
+                    <button id="startTimer" onclick="startTimer()">
+                    Start
+                    </button>
+    
+                    <button id="resetTimer" onclick="resetTimer()">
+                    Reset
+                    </button>
+    
+                </div>
+            </container>    
         </div>
-        <container>
-            <div class="btn-group">
-                <input type="button" value="draw" id="toggleDrawButton" size="30" onclick="toggleDraw()">
-
-                <button id="startTimer" onclick="startTimer()">
-                Start
-                </button>
-
-                <button id="resetTimer" onclick="resetTimer()">
-                Reset
-                </button>
-
-            </div>
-        </container>
-
     </body>
     <!-- socket.io client-side script -->
 	<script src="/socket.io/socket.io.js"></script>
-    <!-- custom client-side javascript -->
-	<script src="./scripts/canvasArea.js"></script>
-  <script src="./scripts/player.js"></script>
-  <script src="./scripts/rankList.js"></script>
-  <script src="./scripts/timer.js"></script>
-  <script src="./scripts/guessProgress.js"></script>
-  <script src="./scripts/chatArea.js"></script>
-  <script src="./scripts/game.js"></script>
+        <!-- custom client-side javascript -->
+    <script src="./scripts/canvasArea.js"></script>
+    <script src="./scripts/player.js"></script>
+    <script src="./scripts/rankList.js"></script>
+    <script src="./scripts/timer.js"></script>
+    <script src="./scripts/guessProgress.js"></script>
+    <script src="./scripts/chatArea.js"></script>
+    <script src="./scripts/game.js"></script>
+    <script src= "./scripts/splashscreen.js"></script>
 	<script src="index.js"></script>
 
 </html>

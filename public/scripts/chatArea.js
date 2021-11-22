@@ -3,33 +3,29 @@ class chatArea{
     chatMessages;
     chatForm;
     chatInput;
-    constructor(){
-<<<<<<< Updated upstream
-        chatBox = document.querySelector("#chatBox");
-        chatMessages = chatBox.querySelector("#");
-        chatInput = chatBox.querySelector("#");
-        chatForm = chatBox.querySelector("#");
-        this.addListeners();
-=======
+    gameId;
+    constructor(myId){
         this.chatBox = document.querySelector("#chatBox");
         this.chatMessages = chatBox.querySelector("#chatMessages");
         this.chatInput = chatBox.querySelector("#chatInput");
         this.chatForm = chatBox.querySelector("#chatForm");
->>>>>>> Stashed changes
+        this.gameId = myId;
+        this.addListeners();
     }
 
-    addMessage(msg){
+    addMessage(userName, msg){
         var item = document.createElement('li');
-        item.textContent = msg;
+        item.textContent = userName +": " + msg;
         this.chatMessages.appendChild(item);
         // window.scrollTo(0, document.body.scrollHeight);
     }
     addListeners(){
-        this.chatF.addEventListener('submit', function(e) {
+        this.chatForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            if (input.value) {
-              socket.emit('chat message', input.value);
-              input.value = '';
+            if (this.chatInput.value) {
+              this.addMessage("boi",this.chatInput.value);
+              socket.emit('chatMessage', {"gameId":this.gameId, "message":this.chatInput.value});
+              this.chatInput.value = '';
             }
         });
     }
