@@ -7,10 +7,10 @@ class game{
   player;
   constructor(userName) {
     socket.emit("newPlayer",userName,(response)=>{
-      console.log(userName, response['gameId']);
+      console.log(response);
       this.canvas = new canvasArea(false);
       this.timer = new timer();
-      this.rankList = new rankList();
+      this.rankList = new rankList(response["rankList"]);
       this.guessProgress = new guessProgress(this.timer);
       this.player = new player(userName,response['gameId']);
       this.rankList.addPlayer(this.player);

@@ -1,8 +1,12 @@
 class rankList{  //TESTED
-  #players;
+  #players = [];
 
-  constructor(){
-    this.#players  = [];
+  constructor(oldPlayers = []){
+    for (var i=0;i<oldPlayers.length;i++){
+      let pl= oldPlayers[i];
+      let p = new player(pl[0],pl[1],pl[2],pl[3],pl[4]);
+      this.#players.push(p);
+    }
   }
 
   addPlayer(player) {
@@ -32,6 +36,15 @@ class rankList{  //TESTED
     return ranking;
   }
 
+  makeList(){
+    var rList = [];
+    for (var i=0;i<this.#players.length;i++)
+    {
+      rList.push(this.#players[i].getParams);
+    }
+    return rList;
+  }
+
   resetRankList() {
     for (var i=0;i<this.#players.length;i++)
     {
@@ -49,3 +62,7 @@ class rankList{  //TESTED
     return null;
   }
 }
+
+try {
+  module.exports = rankList;
+} catch (e) {}

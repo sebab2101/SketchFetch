@@ -5,12 +5,13 @@ class player{  // TESTED
   #status;
   #guessed;
 
-  constructor(name_par, playerId_par) {
+  constructor(name_par, playerId_par, score = 0, status = "guesser", guessed = false) {
+
     this.#name=name_par;
     this.#playerId=playerId_par;
-    this.#score=0;
-    this.#status="guesser";
-    this.#guessed=false;
+    this.#score=score;
+    this.#status=status;
+    this.#guessed=guessed;
   }
 
   get getName() {
@@ -38,6 +39,14 @@ class player{  // TESTED
     return this.#status;
   }
 
+  get getParams(){
+    return [this.#name,
+            this.#playerId,
+            this.#score,
+            this.#status,
+            this.#guessed];
+  }
+
   changeStatus(newStatus) {
     this.#status = newStatus;
   }
@@ -55,3 +64,7 @@ class player{  // TESTED
   }
 
 }
+
+try {
+  module.exports = player;
+} catch (e) {}

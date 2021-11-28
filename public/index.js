@@ -48,6 +48,11 @@ socket.on('newPlayer',function (data){
     g.rankList.addPlayer(p);
 });
 
+socket.on('removePlayer',function (gameId){
+    console.log('A player Left! (Client): ', g.rankList.getUsername(gameId), gameId);
+    g.rankList.removePlayer(gameId);
+});
+
 socket.on('drawCanvas', function(data) {
     console.log("Draw (Client):", data);
     g.canvas.findxy(data["move"],data["x"],data["y"],data["orgWidth"]);
