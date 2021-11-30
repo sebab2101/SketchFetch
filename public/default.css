@@ -152,6 +152,22 @@ body {
 #chatMessages> li { background: white; }
 #chatMessages> li:nth-child(odd) { background: lightgrey; }
 
+#chatBox {
+    height: 80vh;
+    position: relative;
+}
+
+#chatEnterArea{
+    position: absolute;
+    bottom: 0;
+}
+
+#chatMessageArea{
+    height: 80%;
+    overflow-y: scroll;
+}
+
+
 #guessProgressBox{
     font-size: 2.5vw;
 }
