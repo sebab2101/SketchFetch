@@ -45,7 +45,7 @@ io.on('connection', (socket) => {
 		if(gameId != undefined){
 			socket.broadcast.emit('removePlayer',gameId);
 			clientMap.delete(socket.id);
-			console.log(scoker.id, gameId);
+			console.log(socket.id, gameId);
 			rankList.removePlayer(gameId);
 		}
 	})
