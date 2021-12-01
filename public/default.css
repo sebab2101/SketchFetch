@@ -79,7 +79,7 @@ canvas {
     display: block;
     width: 100%;
     height: 500px;
-}  
+}
 
 body {
     background-image: url("images/back.jpg");
@@ -143,7 +143,7 @@ body {
     border-radius: 2rem;
 }
 
-#chatMessages {
+#chatMessages, #rankList {
     list-style-type: none;
     margin: 0;
     padding: 0.4rem;
@@ -151,6 +151,9 @@ body {
 
 #chatMessages> li { background: white; }
 #chatMessages> li:nth-child(odd) { background: lightgrey; }
+
+#rankList> li { background: white; }
+#rankList> li:nth-child(odd) { background: lightblue; }
 
 #chatBox {
     height: 80vh;
@@ -184,7 +187,7 @@ body {
     text-align: center;
     font-size: 2.5vw;
     font-family: "Righteous",sans-serif;
-    
+
 }
 .rainbow_text_animated {
     background: linear-gradient(to right, #6666ff, #0099ff , #00ff00, #ff3399, #6666ff);
@@ -195,10 +198,10 @@ body {
     background-size: 400% 100%;
     -webkit-text-stroke-width: 1px;
     -webkit-text-stroke-color: black;
-    
+
 }
 .rainbow_box_animated {
-    
+
     animation: rainbow_animation 6s ease-in-out infinite;
     background-size: 100% 400%;
 }
