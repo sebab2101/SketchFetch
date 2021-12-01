@@ -38,7 +38,7 @@ io.on('connection', (socket) => {
     	rankList.addPlayer(p);
 		clientMap.set(socket.id, gameId);
 	});
-	
+
 	socket.on('disconnect', ()=>{
 		console.log('A client disconnected!');
 		let gameId = clientMap.get(socket.id);
@@ -78,5 +78,10 @@ io.on('connection', (socket) => {
 	socket.on('chatMessage',(data)=>{
 		console.log('Sending chat message: ', data);
 		socket.broadcast.emit('chatMessage',data);
+	});
+
+	socket.on('ranking',(data)=>{
+		console.log('Sending new ranking: ', data);
+		socket.broadcast.emit('ranking',data);
 	});
 });

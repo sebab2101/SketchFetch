@@ -19,7 +19,7 @@ function addListeners(){
                 console.log("resizing window!");
                 g.canvas.dimensionSet();
             });
-        
+
         }
     });
 }
@@ -46,11 +46,13 @@ socket.on('newPlayer',function (data){
     console.log('New player! (Client): ', data);
     p = new player(data['userName'],data['gameId']);
     g.rankList.addPlayer(p);
+    g.rankListDisplay.updateRankDisplay()
 });
 
 socket.on('removePlayer',function (gameId){
     console.log('A player Left! (Client): ', g.rankList.getUsername(gameId), gameId);
     g.rankList.removePlayer(gameId);
+    g.rankListDisplay.updateRankDisplay()
 });
 
 socket.on('drawCanvas', function(data) {
@@ -88,5 +90,3 @@ socket.on('chatMessage', function(data){
 
 startTimer = ()=>g.timer.startTimer();
 resetTimer = ()=>g.timer.resetTimer();
-
-

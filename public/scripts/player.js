@@ -4,14 +4,16 @@ class player{  // TESTED
   #score;
   #status;
   #guessed;
+  #place;
 
-  constructor(name_par, playerId_par, score = 0, status = "guesser", guessed = false) {
+  constructor(name_par, playerId_par, score = 0, status = "guesser", guessed = false, place=0) {
 
     this.#name=name_par;
     this.#playerId=playerId_par;
     this.#score=score;
     this.#status=status;
     this.#guessed=guessed;
+    this.#place=place;
   }
 
   get getName() {
@@ -24,6 +26,10 @@ class player{  // TESTED
 
   get getScore() {
     return this.#score;
+  }
+
+  get getPlace() {
+    return this.#place;
   }
 
   changeScore(points) {
@@ -44,11 +50,16 @@ class player{  // TESTED
             this.#playerId,
             this.#score,
             this.#status,
-            this.#guessed];
+            this.#guessed,
+            this.#place];
   }
 
   changeStatus(newStatus) {
     this.#status = newStatus;
+  }
+
+  changePlace(newPlace) {
+    this.#place = newPlace;
   }
 
   get getGuessed() {

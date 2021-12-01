@@ -7,10 +7,13 @@ class rankList{  //TESTED
       let p = new player(pl[0],pl[1],pl[2],pl[3],pl[4]);
       this.#players.push(p);
     }
+
   }
 
   addPlayer(player) {
     this.#players.push(player);
+
+    this.sortRankList();
   }
 
   removePlayer(playerId_par) {
@@ -25,6 +28,15 @@ class rankList{  //TESTED
       this.#players.sort(function (a, b) {
         return a.getScore - b.getScore;
         });
+
+      for (var i=0;i<this.#players.length;i++)
+      {
+        this.#players[i].changePlace(i+1);
+      }
+  }
+
+  get allPlayers(){
+    return this.#players;
   }
 
   displayRankList(){ //used for testing

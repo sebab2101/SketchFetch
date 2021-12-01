@@ -1,5 +1,6 @@
 class game{
   rankList;
+  rankListDisplay;
   canvas;
   timer;
   guessProgress;
@@ -11,10 +12,12 @@ class game{
       this.canvas = new canvasArea(false);
       this.timer = new timer();
       this.rankList = new rankList(response["rankList"]);
+      this.rankListDisplay = new rankListDisplay(this.rankList);
       this.guessProgress = new guessProgress(this.timer);
       this.player = new player(userName,response['gameId']);
       this.rankList.addPlayer(this.player);
       this.chat = new chatArea(response['gameId'],this.rankList);
+      this.rankListDisplay.updateRankDisplay()
     });
   }
 
