@@ -29,7 +29,8 @@ io.on('connection', (socket) => {
 	socket.on('newPlayer',(userName,callback) =>{
 		let gameId = Math.random().toString(16).slice(2);
 		console.log('Name: ', userName, "; Id: ", gameId);
-		socket.broadcast.emit('newPlayer',{'userName':userName,'gameId':gameId});
+		socket.to("activePlayers").emit('newPlayer',{'userName':userName,'gameId':gameId});
+		socket.join("activePlayers");
 		callback({
 			"gameId": gameId,
 			"rankList":rankList.makeList()
@@ -43,7 +44,7 @@ io.on('connection', (socket) => {
 		console.log('A client disconnected!');
 		let gameId = clientMap.get(socket.id);
 		if(gameId != undefined){
-			socket.broadcast.emit('removePlayer',gameId);
+			socket.to("activePlayers").emit('removePlayer',gameId);
 			clientMap.delete(socket.id);
 			console.log(socket.id, gameId);
 			rankList.removePlayer(gameId);
@@ -52,36 +53,36 @@ io.on('connection', (socket) => {
 
 	socket.on('changeColorCanvas', (data) => {
 		console.log('changeColor: ', data);
-		socket.broadcast.emit('changeColorCanvas',data);
+		socket.to("activePlayers").emit('changeColorCanvas',data);
 	});
 
 	socket.on('changeBgColorCanvas', (data) => {
 		console.log('changeBgColor: ', data);
-		socket.broadcast.emit('changeBgColorCanvas',data);
+		socket.to("activePlayers").emit('changeBgColorCanvas',data);
 	});
 
 	socket.on('drawCanvas', (data) => {
 		console.log('Draw: ', data);
-		socket.broadcast.emit('drawCanvas',data);
+		socket.to("activePlayers").emit('drawCanvas',data);
 	});
 
 	socket.on('clearCanvas', (data) => {
 		console.log('Canvas Cleared: ');
-		socket.broadcast.emit('clearCanvas');
+		socket.to("activePlayers").emit('clearCanvas');
 	});
 
 	socket.on('brushSizeCanvas', (data) => {
 		console.log('Changing brush size: ', data);
-		socket.broadcast.emit('brushSizeCanvas',data);
+		socket.to("activePlayers").emit('brushSizeCanvas',data);
 	});
 
 	socket.on('chatMessage',(data)=>{
 		console.log('Sending chat message: ', data);
-		socket.broadcast.emit('chatMessage',data);
+		socket.to("activePlayers").emit('chatMessage',data);
 	});
 
 	socket.on('ranking',(data)=>{
 		console.log('Sending new ranking: ', data);
-		socket.broadcast.emit('ranking',data);
+		socket.to("activePlayers").emit('ranking',data);
 	});
 });

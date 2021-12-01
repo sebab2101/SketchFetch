@@ -155,8 +155,7 @@ body {
 #rankList> li { background: white; }
 #rankList> li:nth-child(odd) { background: lightblue; }
 
-#chatBox {
-    height: 80vh;
+#chatBox, #rankBox {
     position: relative;
 }
 
@@ -168,6 +167,11 @@ body {
 #chatMessageArea{
     height: 80%;
     overflow-y: scroll;
+}
+
+#rankListDisplay{
+    height: 100%;
+    overflow-y:scroll;
 }
 
 

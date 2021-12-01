@@ -6,20 +6,26 @@ var g;
 var splash = new splashscreen();
 function addListeners(){
 
-    splash.loginForm.addEventListener('submit',(e)=>{
+    splash.loginForm.addEventListener('submit', (e)=>{
         e.preventDefault();
         if (splash.nameInput.value) {
-            g = new game(splash.nameInput.value)
+            g = new game(splash.nameInput.value);
             splash.splashZone.style.display = "none";
             splash.unsplashZone.style.display = "block";
             splash.nameInput.value = '';
-
             //window resize event
             window.addEventListener('resize', ()=>{
-                console.log("resizing window!");
+                console.log("redrawing window!");
                 g.canvas.dimensionSet();
+                let height = g.canvas.canvas.height;
+                g.chat.chatBox.height = height;
+                g.rankListDisplay.rankingBox.style.height = height;
             });
-
+            
+            setTimeout(function() {
+                window.dispatchEvent(new Event('resize'));
+              }, 10);              
+            
         }
     });
 }
