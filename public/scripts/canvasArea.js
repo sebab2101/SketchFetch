@@ -54,12 +54,14 @@ class canvasArea{
         this.active=true;
         this.bgColor("white-bg");
         this.color("black-brush");
+        this.canvas.style.cursor = "crosshair";
         this.addMouseListeners();
     }
 
     makeUnactive(){
         this.drawBox.style.display = "none";
         this.active=false;
+        this.canvas.style.cursor = "default";
         this.removeMouseListeners();
     }
 

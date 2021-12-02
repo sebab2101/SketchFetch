@@ -22,6 +22,7 @@ io.on('connection', (socket) => {
 	socketEvents.disconnectPlayer(socket);
 	socketEvents.changeColorCanvas(socket);
 	socketEvents.changeBgColorCanvas(socket);
+	socketEvents.drawCanvas(socket);
 	socketEvents.clearCanvas(socket);
 	socketEvents.brushSizeCanvas(socket);
 	socketEvents.chatMessage(socket);
