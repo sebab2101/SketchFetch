@@ -33,7 +33,6 @@ class chatArea{
 
     scroll(){
         let shouldScroll = (this.chatMessageArea.scrollTop + this.chatMessageArea.clientHeight + 50 ) >= this.chatMessageArea.scrollHeight;
-        console.log((this.chatMessageArea.scrollTop + this.chatMessageArea.clientHeight ), this.chatMessageArea.scrollHeight);
         if (shouldScroll) {
             this.chatMessageArea.scrollTop = this.chatMessageArea.scrollHeight;
         }

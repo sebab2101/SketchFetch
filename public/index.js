@@ -92,5 +92,29 @@ socket.on('chatMessage', function(data){
     }
 });
 
+socket.on("server_idle",function(){
+    console.log("server idle");
+});
+
+socket.on("server_gameStart",function(){
+    g.chat.addServerMessage("Enough players have joined. Starting game soon..");
+});
+
+socket.on("server_roundBegin",function(num){
+    g.chat.addServerMessage("Round " + num + " begins!");
+});
+
+socket.on("server_roundOngoing",function(){
+    console.log("server roundOngoing");
+});
+
+socket.on("server_roundEnd",function(){
+    console.log("server roundEnd");
+});
+
+socket.on("server_gameEnd",function(){
+    g.chat.addServerMessage("Game Over! Thanks for playing!");
+});
+
 startTimer = ()=>g.timer.startTimer();
 resetTimer = ()=>g.timer.resetTimer();

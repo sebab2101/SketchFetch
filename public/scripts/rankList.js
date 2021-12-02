@@ -73,6 +73,10 @@ class rankList{  //TESTED
     }
     return null;
   }
+
+  get getNumOfPlayers(){
+    return this.#players.length;
+  }
 }
 
 try {
