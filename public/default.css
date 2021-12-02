@@ -149,8 +149,23 @@ body {
     padding: 0.4rem;
 }
 
-#chatMessages> li { background: white; }
+#chatMessages> li {
+    background: white;
+    word-wrap: break-word;
+}
 #chatMessages> li:nth-child(odd) { background: lightgrey; }
+
+#chatMessages > li.correctRoom{
+    background: greenyellow;
+}
+#chatMessages > li:nth-child(odd).correctRoom{ background: lightgreen; }
+
+#chatMessages > li.serverMessage{
+    background: #F08080;
+}
+#chatMessages > li:nth-child(odd).serverMessage{ background: #F2003C; }
+
+
 
 #rankList> li { background: white; }
 #rankList> li:nth-child(odd) { background: lightblue; }

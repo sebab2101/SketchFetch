@@ -18,14 +18,9 @@ function addListeners(){
                 console.log("redrawing window!");
                 g.canvas.dimensionSet();
                 let height = g.canvas.canvas.height;
-                g.chat.chatBox.height = height;
+                g.chat.chatBox.style.height = height;
                 g.rankListDisplay.rankingBox.style.height = height;
-            });
-            
-            setTimeout(function() {
-                window.dispatchEvent(new Event('resize'));
-              }, 10);              
-            
+            });  
         }
     });
 }
@@ -52,13 +47,16 @@ socket.on('newPlayer',function (data){
     console.log('New player! (Client): ', data);
     p = new player(data['userName'],data['gameId']);
     g.rankList.addPlayer(p);
-    g.rankListDisplay.updateRankDisplay()
+    g.rankListDisplay.updateRankDisplay();
+    g.chat.addServerMessage(data['userName']+" has joined.");
 });
 
 socket.on('removePlayer',function (gameId){
-    console.log('A player Left! (Client): ', g.rankList.getUsername(gameId), gameId);
+    let uName = g.rankList.getUsername(gameId);
+    console.log('A player Left! (Client): ', uName, gameId);
     g.rankList.removePlayer(gameId);
-    g.rankListDisplay.updateRankDisplay()
+    g.rankListDisplay.updateRankDisplay();
+    g.chat.addServerMessage(uName+" has left.");
 });
 
 socket.on('drawCanvas', function(data) {
