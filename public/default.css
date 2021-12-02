@@ -91,12 +91,23 @@ body {
     font-size: 2.5vw;
     color:red;
     background-color: green;
+    
 }
 
-.whiteBlack {
+.extraRound{
+    border-radius: 3rem;
+}
+
+.whiteOutText {
 	text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
     /* background-color: rgba(255,255,255, 0.5); */
 }
+
+.blackOutText {
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: black;
+}
+
 
 .roundBlock{
     /* background-color:rgba(138, 43, 226,0.9); */
@@ -180,7 +191,7 @@ body {
 }
 
 #chatMessageArea{
-    height: 80%;
+    height: calc(100% - 3rem);
     overflow-y: scroll;
 }
 

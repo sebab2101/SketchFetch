@@ -9,7 +9,7 @@ class game{
   constructor(userName) {
     socket.emit("newPlayer",userName,(response)=>{
       console.log(response);
-      this.canvas = new canvasArea(false,document.querySelector("#drawBox"),document.querySelector("#canvasArea"));
+      this.canvas = new canvasArea(false);
       this.timer = new timer();
       this.rankList = new rankList(response["rankList"]);
       this.rankListDisplay = new rankListDisplay(this.rankList);

@@ -22,10 +22,10 @@ class canvasArea{
     backgroundColor = "white";
     active = false;
     controller = new AbortController();
-    constructor(active, drawBox, canvasArea){
-        this.drawBox = drawBox;
+    constructor(active){
+        this.drawBox = document.querySelector("#drawBox");
         this.drawSizeSelector = this.drawBox.querySelector("#brushSizeRange");
-        this.canvas = canvasArea;
+        this.canvas = document.querySelector("#canvasArea");
         this.ctx = this.canvas.getContext("2d");
         this.drawBox.style.display = "none";
         this.active = active;

@@ -7,8 +7,6 @@ const { SocketAddress } = require('net');
 const wordListClass = require('./wordList.js');
 const playerClass = require('./public/scripts/player.js');
 const rankListClass = require('./public/scripts/rankList.js');
-const canvasClass = require('./public/scripts/canvasArea.js');
-
 
 // Create app var from express, point it towards the public directory to serve up assets
 var app = express();
@@ -26,7 +24,6 @@ server.listen(process.env.PORT || 9020, function() {
 
 let rankList = new rankListClass;
 let clientMap = new Map;
-
 io.on('connection', (socket) => {
 	console.log('A client is connected!');
 	socket.on('newPlayer',(userName,callback) =>{
