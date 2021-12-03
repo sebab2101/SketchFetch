@@ -106,8 +106,18 @@ socket.on("server_roundBegin",function(num){
 });
 
 socket.on("server_pickPlayer",function(id){
+    g.canvas.makeUnactive();
     g.chat.addServerMessage("Player " + id + " is choosing a word!");
 });
+
+socket.on("server_receiveDraw", function(data){
+    let gameId = data["drawer"], wordLength = data["wordLength"];
+    let userName = g.rankList.getUsername(gameId);
+    console.log("Receiving draw data from", userName);
+    g.chat.addServerMessage(userName + " is drawing.");
+    g.guessProgress.startGuessWord(wordLength);
+});
+
 
 socket.on ("server_startDraw", (data,callback) =>{
     console.log(data);

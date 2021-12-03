@@ -206,6 +206,7 @@ body {
 }
 
 #guessWord {
+    background: #E3D6E9;
     font-family: monospace;
     letter-spacing: 1rem;
     text-transform: uppercase;

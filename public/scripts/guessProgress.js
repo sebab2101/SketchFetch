@@ -26,10 +26,4 @@ class guessProgress{
         this.guessWord = word
         this.guessWordArea.innerText = this.guessWord;
     }
-
-    displayWord(){
-        for (var i = 0; i < word.length; i++) {
-            answerArray[i] = "_";
-          }
-    }
 }

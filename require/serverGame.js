@@ -152,7 +152,7 @@ module.exports = class serverGame{
                         console.log("Player picked: ", response);
                         this.state = states['drawPhase'];
                         this.currentWord = response;
-                        this.io.emit("server_receiveDraw", {"word": this.currentWord, "drawer":this.currentGameId});
+                        this.io.emit("server_receiveDraw", {"wordLength": this.currentWord.length, "drawer":this.currentGameId});
                         this.processState();
                         return;
                     }
