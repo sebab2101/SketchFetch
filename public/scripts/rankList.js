@@ -31,15 +31,9 @@ class rankList{  //TESTED
 
       for (var i=0;i<this.#players.length;i++)
       {
-        if(i==0){
-          this.#players[i].changePlace(i+1);
-        }
-
-        if(i>0 && this.#players[i].getScore != this.#players[i-1].getScore){
-          this.#players[i].changePlace(i+1);
-        }
-        else if(i>0 && this.#players[i].getScore == this.#players[i-1].getScore){
-          this.#players[i].changePlace(i);
+        this.#players[i].changePlace(i+1);
+        if(i>0 && this.#players[i].getScore == this.#players[i-1].getScore){
+          this.#players[i].changePlace(this.#players[i-1].getPlace);
         }
 
       }
@@ -82,10 +76,6 @@ class rankList{  //TESTED
       }
     }
     return null;
-  }
-
-  get getNumOfPlayers(){
-    return this.#players.length;
   }
 }
 
