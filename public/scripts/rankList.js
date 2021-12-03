@@ -32,6 +32,10 @@ class rankList{  //TESTED
       for (var i=0;i<this.#players.length;i++)
       {
         this.#players[i].changePlace(i+1);
+        if(i>0 && this.#players[i].getScore == this.#players[i-1].getScore){
+          this.#players[i].changePlace(this.#players[i-1].getPlace);
+        }
+
       }
   }
 
