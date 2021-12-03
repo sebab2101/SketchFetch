@@ -77,6 +77,12 @@ class rankList{  //TESTED
   get getNumOfPlayers(){
     return this.#players.length;
   }
+
+  atIndex(i){
+    if(i < this.#players.length && i>=0)
+      return this.#players[i];
+    return null;
+  }
 }
 
 try {

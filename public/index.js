@@ -93,19 +93,20 @@ socket.on('chatMessage', function(data){
 });
 
 socket.on("server_idle",function(){
-    console.log("server idle");
+    g.chat.addServerMessage("Waiting for more players..");
 });
 
 socket.on("server_gameStart",function(){
-    g.chat.addServerMessage("Enough players have joined. Starting game soon..");
+    g.chat.addServerMessage("Starting game soon..");
 });
 
 socket.on("server_roundBegin",function(num){
     g.chat.addServerMessage("Round " + num + " begins!");
 });
 
-socket.on("server_roundOngoing",function(){
-    console.log("server roundOngoing");
+socket.on ("startDraw", (data,callback) =>{
+    console.log(data);
+    callback(data["wordChoices"][0]);
 });
 
 socket.on("server_roundEnd",function(){

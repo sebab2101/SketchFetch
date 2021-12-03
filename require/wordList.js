@@ -482,28 +482,19 @@ class wordList{
 
         }
 
-        randomWordPick(){
-            let wordsLength = this.words.length;
+        randomWordPick(num){
+            var wordsLength = this.words.length;
+            var randomWords = new Array;
+            var temp;
+            for(let i =0; i< num ; i++){
+                temp =  this.words[Math.floor(Math.random()*wordsLength)];
+                while(randomWords.includes(temp)){
+                    temp =  this.words[Math.floor(Math.random()*wordsLength)];
+                }
+                randomWords.push(temp);
+            }
             
-            var randomWords1 = this.words[Math.floor(Math.random()*this.words.length)],randomWords2,randomWords3;
-
-            if (wordsLength > 1) {
-                do {
-                  randomWords2 = this.words[Math.floor(Math.random() * wordsLength)];
-                } while(randomWords1 == randomWords2);
-
-            }
-
-
-            if (wordsLength > 1) {
-                do {
-                    randomWords3 = this.words[Math.floor(Math.random() * wordsLength)];
-                } while(randomWords3 == randomWords2);
-
-
-            }
-
-            return [randomWords1, randomWords2, randomWords3];
+            return randomWords;
         }
 }
 

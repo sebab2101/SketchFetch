@@ -16,6 +16,7 @@ server.listen(process.env.PORT || 9020, function() {
 });
 
 game.setIo(io);
+
 io.on('connection', (socket) => {
 	console.log('A client is connected to the login screen!');
 	socketEvents.newPlayer(socket);
