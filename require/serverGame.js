@@ -112,7 +112,7 @@ module.exports = class serverGame{
                     this.state = states['roundBegin'];
                     this.roundCount = 0;
                     this.io.emit('server_roundBegin',this.roundCount);
-                    this.processState(); 
+                    this.processState();
                 }, start_time);
 
                 if(this.numPlayers < min_players){
@@ -164,6 +164,7 @@ module.exports = class serverGame{
                 this.currentTimerId = setTimeout(() => {
                     if(this.currentPlayerIndex == 0){
                         this.state = states['roundEnd'];
+												this.io.emit('server_roundEnd', this.roundCount);
                     }else{
                         this.state = states['pickPlayer'];
                         this.currentPlayerIndex--;

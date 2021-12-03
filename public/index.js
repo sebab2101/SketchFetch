@@ -4,6 +4,9 @@ Client-side js.
 var socket = io();
 var g;
 var splash = new splashscreen();
+var drawTime = 30;
+var choiceTime = 10;
+var gameStartTime = 10;
 function addListeners(){
 
     splash.loginForm.addEventListener('submit', (e)=>{
@@ -97,12 +100,14 @@ socket.on("server_idle",function(){
 });
 
 socket.on("server_gameStart",function(){
+    g.timer.startTimer(gameStartTime);
     g.chat.addServerMessage("Starting game soon..");
 });
 
 socket.on("server_roundBegin",function(num){
+    g.timer.startTimer(drawTime);
     console.log("round", num, "begins");
-    g.chat.addServerMessage("Round " + num + " begins!");
+    g.chat.addServerMessage("Round " + (num+1) + " begins!");
 });
 
 socket.on("server_pickPlayer",function(id){
@@ -120,19 +125,23 @@ socket.on("server_receiveDraw", function(data){
 
 
 socket.on ("server_startDraw", (data,callback) =>{
+
+    g.timer.startTimer(choiceTime);
+    g.canvas.makeActive();
     console.log(data);
     callback(data["wordChoices"][0]);
 });
 
 
+socket.on("server_roundEnd",function(num){
+  console.log("round", num, "ended");
+  g.chat.addServerMessage("Round " + num + " ended!");
 
-socket.on("server_roundEnd",function(){
-    console.log("server roundEnd");
 });
 
 socket.on("server_gameEnd",function(){
     g.chat.addServerMessage("Game Over! Thanks for playing!");
 });
 
-startTimer = ()=>g.timer.startTimer();
-resetTimer = ()=>g.timer.resetTimer();
+//startTimer = (time)=>g.timer.startTimer(time);
+//resetTimer = (time)=>g.timer.resetTimer(time);
