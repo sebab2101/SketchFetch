@@ -109,7 +109,7 @@ socket.on("server_pickPlayer",function(id){
     g.chat.addServerMessage("Player " + id + " is choosing a word!");
 });
 
-socket.on ("startDraw", (data,callback) =>{
+socket.on ("server_startDraw", (data,callback) =>{
     console.log(data);
     callback(data["wordChoices"][0]);
 });
