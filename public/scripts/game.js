@@ -17,7 +17,10 @@ class game{
       this.player = new player(userName,response['gameId']);
       this.rankList.addPlayer(this.player);
       this.chat = new chatArea(response['gameId'],this.rankList);
+      this.chat.addServerMessage("You have joined.");
       this.rankListDisplay.updateRankDisplay()
+      //force a window redraw event
+      window.dispatchEvent(new Event('resize'));
     });
   }
 

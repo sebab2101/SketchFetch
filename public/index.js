@@ -6,20 +6,21 @@ var g;
 var splash = new splashscreen();
 function addListeners(){
 
-    splash.loginForm.addEventListener('submit',(e)=>{
+    splash.loginForm.addEventListener('submit', (e)=>{
         e.preventDefault();
         if (splash.nameInput.value) {
-            g = new game(splash.nameInput.value)
+            g = new game(splash.nameInput.value);
             splash.splashZone.style.display = "none";
             splash.unsplashZone.style.display = "block";
             splash.nameInput.value = '';
-
             //window resize event
             window.addEventListener('resize', ()=>{
-                console.log("resizing window!");
+                console.log("redrawing window!");
                 g.canvas.dimensionSet();
-            });
-
+                let height = g.canvas.canvas.height;
+                g.chat.chatBox.style.height = height;
+                g.rankListDisplay.rankingBox.style.height = height;
+            });  
         }
     });
 }
@@ -46,13 +47,16 @@ socket.on('newPlayer',function (data){
     console.log('New player! (Client): ', data);
     p = new player(data['userName'],data['gameId']);
     g.rankList.addPlayer(p);
-    g.rankListDisplay.updateRankDisplay()
+    g.rankListDisplay.updateRankDisplay();
+    g.chat.addServerMessage(data['userName']+" has joined.");
 });
 
 socket.on('removePlayer',function (gameId){
-    console.log('A player Left! (Client): ', g.rankList.getUsername(gameId), gameId);
+    let uName = g.rankList.getUsername(gameId);
+    console.log('A player Left! (Client): ', uName, gameId);
     g.rankList.removePlayer(gameId);
-    g.rankListDisplay.updateRankDisplay()
+    g.rankListDisplay.updateRankDisplay();
+    g.chat.addServerMessage(uName+" has left.");
 });
 
 socket.on('drawCanvas', function(data) {
@@ -86,6 +90,30 @@ socket.on('chatMessage', function(data){
     if(userName != null){
         g.chat.addMessage(userName,data['message']);
     }
+});
+
+socket.on("server_idle",function(){
+    console.log("server idle");
+});
+
+socket.on("server_gameStart",function(){
+    g.chat.addServerMessage("Enough players have joined. Starting game soon..");
+});
+
+socket.on("server_roundBegin",function(num){
+    g.chat.addServerMessage("Round " + num + " begins!");
+});
+
+socket.on("server_roundOngoing",function(){
+    console.log("server roundOngoing");
+});
+
+socket.on("server_roundEnd",function(){
+    console.log("server roundEnd");
+});
+
+socket.on("server_gameEnd",function(){
+    g.chat.addServerMessage("Game Over! Thanks for playing!");
 });
 
 startTimer = ()=>g.timer.startTimer();
