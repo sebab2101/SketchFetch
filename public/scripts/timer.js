@@ -1,5 +1,5 @@
 class timer {
-  #defaultTime=30;
+  #defaultTime;
   #seconds;
   #interval;
   #counter;
@@ -11,7 +11,7 @@ class timer {
       this.#seconds = this.#defaultTime;
       this.#interval = null;
       this.#counter = false;
-      this.timer.innerText = this.#defaultTime;
+      //this.timer.innerText = this.#defaultTime;
    }
 
    runTimer() {
@@ -34,8 +34,9 @@ class timer {
 
    }
 
-   startTimer() {
-
+   startTimer(time) {
+     this.#defaultTime = time;
+     this.#seconds = time;
      if (this.#counter === false) {
        this.#interval = window.setInterval(() => this.runTimer(),1000);
        document.getElementById("startTimer").innerText = "Stop";
@@ -56,7 +57,7 @@ class timer {
       this.timer.innerHTML = this.#defaultTime;
       this.timerBox.style.background = `green`;
       document.getElementById("startTimer").innerHTML = "Start"
-      
+
   }
 
   getTime(){
