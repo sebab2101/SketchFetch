@@ -20,7 +20,7 @@ function addListeners(){
                 let height = g.canvas.canvas.height;
                 g.chat.chatBox.style.height = height;
                 g.rankListDisplay.rankingBox.style.height = height;
-            });  
+            });
         }
     });
 }
@@ -101,13 +101,20 @@ socket.on("server_gameStart",function(){
 });
 
 socket.on("server_roundBegin",function(num){
+    console.log("round", num, "begins");
     g.chat.addServerMessage("Round " + num + " begins!");
+});
+
+socket.on("server_pickPlayer",function(id){
+    g.chat.addServerMessage("Player " + id + " is choosing a word!");
 });
 
 socket.on ("startDraw", (data,callback) =>{
     console.log(data);
     callback(data["wordChoices"][0]);
 });
+
+
 
 socket.on("server_roundEnd",function(){
     console.log("server roundEnd");
