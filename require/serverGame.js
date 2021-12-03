@@ -89,6 +89,13 @@ module.exports = class serverGame{
         return this.rankList.getNumOfPlayers;
     }
 
+    removeTimeout(){
+        if(this.currentTimerId){
+            clearTimeout(this.currentTimerId);
+            this.currentTimerId = null;
+        }
+    }
+
     processState = ()=>{
         switch(this.state){
             case states['idle']:
@@ -100,8 +107,10 @@ module.exports = class serverGame{
                 }
                 break;
             case states['gameStart']:
+                this.removeTimeout();
                 this.currentTimerId = setTimeout(() => {
                     this.state = states['roundBegin'];
+                    this.roundCount = 0;
                     this.io.emit('server_roundBegin',this.roundCount);
                     this.processState(); 
                 }, start_time);
@@ -123,6 +132,7 @@ module.exports = class serverGame{
                 this.processState();
                 break;
             case states['pickPlayer']:
+                this.removeTimeout();
                 this.currentTimerId = setTimeout(() => {
                     this.state = states['pickPlayer'];
                     this.currentPlayerIndex--;
@@ -136,12 +146,13 @@ module.exports = class serverGame{
                 this.currentSocket = this.io.sockets.sockets.get(this.currentSocketId);
                 console.log("Player picked:", this.currentGameId,this.currentSocketId);
                 let wordChoices = this.wordList.randomWordPick(3);
-                this.currentSocket.emit("startDraw",{"wordChoices":wordChoices},(response)=>{
+                this.currentSocket.emit("server_startDraw",{"wordChoices":wordChoices},(response)=>{
                     if(wordChoices.includes(response)){
                         clearTimeout(this.currentTimerId);
                         console.log("Player picked: ", response);
                         this.state = states['drawPhase'];
                         this.currentWord = response;
+                        this.io.emit("server_receiveDraw", {"word": this.currentWord, "drawer":this.currentGameId});
                         this.processState();
                         return;
                     }
@@ -149,6 +160,7 @@ module.exports = class serverGame{
 
                 break;
             case states['drawPhase']:
+                this.removeTimeout();
                 this.currentTimerId = setTimeout(() => {
                     if(this.currentPlayerIndex == 0){
                         this.state = states['roundEnd'];
