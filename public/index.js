@@ -104,7 +104,7 @@ socket.on("server_roundBegin",function(num){
     g.chat.addServerMessage("Round " + num + " begins!");
 });
 
-socket.on ("startDraw", (data,callback) =>{
+socket.on ("server_startDraw", (data,callback) =>{
     console.log(data);
     callback(data["wordChoices"][0]);
 });
