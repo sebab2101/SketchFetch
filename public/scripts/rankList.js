@@ -87,6 +87,16 @@ class rankList{  //TESTED
       return this.#players[i];
     return null;
   }
+
+  getIndex(gameId){
+    for (var i=0;i<this.#players.length;i++)
+    {
+      if(this.#players[i].getPlayerId == gameId){
+        return i;
+      }
+    }
+    return null;
+  }
 }
 
 try {

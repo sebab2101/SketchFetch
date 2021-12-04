@@ -13,7 +13,7 @@ class socketEvents{
             });
     
             game.addClient(socket.id, userName, gameId);
-            game.processState();
+            game.processState("newPlayer",gameId);
         });
     };
     
@@ -23,7 +23,7 @@ class socketEvents{
             if(gameId != undefined){
                 socket.to("activePlayers").emit('removePlayer',gameId);
                 game.removeClient(socket.id,gameId);
-                game.processState();
+                game.processState("disconnectPlayer",gameId);
             }
         });
     };
