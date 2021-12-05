@@ -24,6 +24,16 @@ class rankList{  //TESTED
     if ( ~position ) this.#players.splice(position, 1); //check if the player with given id exists
   }
 
+  getPlayer(playerId){
+    for (var i=0;i<this.#players.length;i++)
+    {
+      if(this.#players[i].getPlayerId == playerId){
+        return this.#players[i];
+      }
+    }
+    return null;
+  }
+
   sortRankList() {
       this.#players.sort(function (a, b) {
         return a.getScore - b.getScore;
@@ -108,6 +118,14 @@ class rankList{  //TESTED
       }
     }
     return null;
+  }
+
+  resetAllStatus(){
+    for (var i=0;i<this.#players.length;i++)
+    {
+      this.#players[i].resetGuessed();
+      this.#players[i].resetDrawStatus();
+    }
   }
 }
 

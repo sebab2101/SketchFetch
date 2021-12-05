@@ -98,10 +98,25 @@ socket.on('brushSizeCanvas', function(data) {
 
 socket.on('chatMessage', function(data){
     console.log("Message received (Client):", data);
-    let userName = g.rankList.getUsername(data['gameId']);
-    if(userName != null){
-        g.chat.addMessage(userName,data['message']);
+    let gameId =data['gameId'];
+    let player = g.rankList.getPlayer(gameId);
+    if(player != null){
+        let userName = player.getName ,type = "allRoom";
+        if(player.getGuessed){
+            type = "correctRoom";
+        }
+        g.chat.addMessage(userName,data['message'],type);
     }
+});
+
+socket.on('correctGuess',function(gameId){
+    let userName = g.rankList.getUsername(gameId);
+    console.log(userName, "guessed correctly.");
+    if(userName != null){
+        g.chat.addServerMessage(userName+ " guessed correctly!");
+    }
+    g.rankList.getPlayer(gameId).rightGuessed();
+    g.rankListDisplay.updateRankDisplay();
 });
 
 socket.on("server_idle",function(){
@@ -122,6 +137,7 @@ socket.on("server_roundBegin",function(num){
 
 socket.on("server_pickPlayer",function(id){
     g.canvas.makeUnactive();
+    g.rankList.resetAllStatus();
     g.timer.startTimer(PICK_TIME);
     g.chat.addServerMessage("Player " + g.rankList.getUsername(id) + " is choosing a word!");
 });
@@ -133,15 +149,19 @@ socket.on("server_pickWord",(data,callback) =>{
 
 socket.on("server_drawPhase", function(data){
     let gameId = data["drawer"], wordLength = data["wordLength"];
-    let userName = g.rankList.getUsername(gameId);
+    let player = g.rankList.getPlayer(gameId);
+    let userName = player.getName;
     console.log("Receiving draw data from", userName);
     g.timer.startTimer(DRAW_TIME);
     g.chat.addServerMessage(userName + " is drawing.");
     g.guessProgress.startGuessWord(wordLength);
+    player.rightGuessed();
+    player.makeDrawer();
     if(g.player.getPlayerId == gameId)
     {
-      g.canvas.makeActive();
+        g.canvas.makeActive();
     }
+    g.rankListDisplay.updateRankDisplay();
 });
 
 socket.on("server_roundEnd",function(num){

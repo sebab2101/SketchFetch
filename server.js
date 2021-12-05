@@ -15,6 +15,7 @@ server.listen(process.env.PORT || 9020, function() {
 	console.log('Server started at http://localhost:9020');
 });
 
+socketEvents.setIo(io);
 game.setIo(io);
 
 io.on('connection', (socket) => {

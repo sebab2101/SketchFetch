@@ -38,6 +38,7 @@ module.exports = class serverGame{
     currentSocketId;
     currentSocket;
     currentTimerId;
+    rightGuesses=1;
     //initial state
     state = states['idle'];
     oldState = states['idle'];
@@ -79,6 +80,10 @@ module.exports = class serverGame{
         return this.clientRevMap.get(gameId);
     }
 
+    getSocket(socketId){
+        return this.io.sockets.sockets.get(socketId);
+    }
+
     getRankList(){
         return this.rankList.makeList()
     }
@@ -91,12 +96,36 @@ module.exports = class serverGame{
         return this.rankList.getNumOfPlayers;
     }
 
+    resetChatRooms(){
+        Array.from(this.clientMap.keys()).forEach(socketId => {
+            let socket = this.getSocket(socketId);
+            socket.leave("correctPlayers");
+        });
+    }
+
+    hasGuessWord(chatMessage){
+        if(this.state != states['drawPhase']){
+            return false;
+        }
+        let words = chatMessage.split(" ");
+        if(words.includes(this.currentWord)){
+            return true;
+        }
+        return false;
+    }
+
     //destroy inbound setTimeout function
     removeTimeout(){
         if(this.currentTimerId){
             clearTimeout(this.currentTimerId);
             this.currentTimerId = null;
         }
+    }
+
+    //If player guesses right
+    someoneGuessedRight(){
+        this.rightGuesses++;
+        this.processState();
     }
 
     processState = (event = null, eventGameId = null)=>{
@@ -159,7 +188,7 @@ module.exports = class serverGame{
                     this.io.emit('server_pickPlayer', this.currentGameId);
                     this.currentGameId = this.rankList.atIndex(this.currentPlayerIndex).getPlayerId;
                     this.currentSocketId = this.getSocketId(this.currentGameId);
-                    this.currentSocket = this.io.sockets.sockets.get(this.currentSocketId);
+                    this.currentSocket = this.getSocket(this.currentSocketId);
                     console.log("Drawer GameId:", this.currentGameId, ", SocketId",this.currentSocketId);
                     let wordChoices = this.wordList.randomWordPick(NUM_RANDWORDS);
                     this.currentSocket.emit("server_pickWord",{"wordChoices":wordChoices},(response)=>{
@@ -218,7 +247,8 @@ module.exports = class serverGame{
                 if(firstEntry){
                     this.removeTimeout();
                     this.io.emit("server_drawPhase", {"wordLength": this.currentWord.length, "drawer":this.currentGameId});
-                
+                    this.currentSocket.join("correctPlayers");
+                    this.rightGuesses = 1;
                     this.currentTimerId = setTimeout(() => {
                         if(this.currentPlayerIndex == 0){
                             this.state = states['roundEnd'];
@@ -227,6 +257,7 @@ module.exports = class serverGame{
                             this.currentPlayerIndex--;
                             this.currentGameId = this.rankList.atIndex(this.currentPlayerIndex).getPlayerId;
                         }
+                        this.resetChatRooms();
                         this.processState();
                         return;
                     }, DRAW_TIME);
@@ -240,9 +271,22 @@ module.exports = class serverGame{
                             this.state = states['pickPlayer'];
                             this.currentPlayerIndex--;
                         }
+                        this.resetChatRooms();
                         this.processState();
                         return;
                     }
+                }
+
+                if(this.rightGuesses == this.numPlayers){
+                    if(this.currentPlayerIndex == 0){
+                        this.state = states['roundEnd'];
+                    }else{
+                        this.state = states['pickPlayer'];
+                        this.currentPlayerIndex--;
+                    }
+                    this.resetChatRooms();
+                    this.processState();
+                    return;
                 }
                 break;
             case states['roundEnd']:

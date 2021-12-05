@@ -180,6 +180,9 @@ body {
 
 #rankList> li { background: white; }
 #rankList> li:nth-child(odd) { background: lightblue; }
+#rankList > li.correctPlayer{ background: lightgreen; }
+#rankList > li.drawer{ background: #F08080; }
+
 
 #chatBox, #rankBox {
     position: relative;

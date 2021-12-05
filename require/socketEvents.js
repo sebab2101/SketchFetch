@@ -2,6 +2,11 @@ const serverGameClass = require('./serverGame.js');
 const game = new serverGameClass;
 
 class socketEvents{
+    static io;
+    static setIo(io){
+        this.io = io;
+    }
+
     static newPlayer = (socket)=>{
         socket.on('newPlayer',(userName,callback) =>{
             let gameId = game.generateGameId();
@@ -65,8 +70,19 @@ class socketEvents{
     
     static chatMessage = (socket)=>{
         socket.on('chatMessage',(data)=>{
-            console.log('Sending chat message: ', data);
-            socket.to("activePlayers").emit('chatMessage',data);
+            console.log('Got chat message: ', data);
+            if(socket.rooms.has('correctPlayers')){
+                socket.to("correctPlayers").emit('chatMessage',data);
+            }else{
+                if(game.hasGuessWord(data['message'])){
+                    console.log("Player SocketId:", socket.id, " guessed correctly!");
+                    game.someoneGuessedRight();
+                    socket.join("correctPlayers");
+                    this.io.to("activePlayers").emit('correctGuess',data['gameId']);
+                }else{
+                    socket.to("activePlayers").emit('chatMessage',data);
+                }
+            }
         });
     };
     
