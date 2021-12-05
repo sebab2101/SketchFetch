@@ -123,7 +123,7 @@ socket.on("server_roundBegin",function(num){
 socket.on("server_pickPlayer",function(id){
     g.canvas.makeUnactive();
     g.timer.startTimer(PICK_TIME);
-    g.chat.addServerMessage("Player " + id + " is choosing a word!");
+    g.chat.addServerMessage("Player " + g.rankList.getUsername(id) + " is choosing a word!");
 });
 
 socket.on("server_pickWord",(data,callback) =>{
@@ -138,6 +138,10 @@ socket.on("server_drawPhase", function(data){
     g.timer.startTimer(DRAW_TIME);
     g.chat.addServerMessage(userName + " is drawing.");
     g.guessProgress.startGuessWord(wordLength);
+    if(g.player.getPlayerId == gameId)
+    {
+      g.canvas.makeActive();
+    }
 });
 
 socket.on("server_roundEnd",function(num){

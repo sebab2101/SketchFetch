@@ -77,7 +77,19 @@ class rankList{  //TESTED
     }
     return null;
   }
-
+/*
+  isDrawer(gameId){
+    for (var i=0;i<this.#players.length;i++)
+    {
+      if(this.#players[i].getPlayerId == gameId){
+        if(this.#players[i].getStatus == "drawer"){
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+*/
   get getNumOfPlayers(){
     return this.#players.length;
   }
