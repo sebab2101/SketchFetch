@@ -21,6 +21,8 @@ const PICK_TIME = 10000;
 //time for drawing
 const DRAW_TIME = 35000;
 const TOTAL_ROUNDS = 3;
+//number of choices drawer gets to pick from
+const NUM_RANDWORDS = 3;
 
 module.exports = class serverGame{
     rankList = new rankListClass;
@@ -89,6 +91,7 @@ module.exports = class serverGame{
         return this.rankList.getNumOfPlayers;
     }
 
+    //destroy inbound setTimeout function
     removeTimeout(){
         if(this.currentTimerId){
             clearTimeout(this.currentTimerId);
@@ -124,13 +127,13 @@ module.exports = class serverGame{
                 if(firstEntry){
                     this.removeTimeout();
                     this.io.emit('server_gameStart');
-                }
 
-                this.currentTimerId = setTimeout(() => {
-                    this.state = states['roundBegin'];
-                    this.roundCount = 1;
-                    this.processState();
-                }, START_TIME);
+                    this.currentTimerId = setTimeout(() => {
+                        this.state = states['roundBegin'];
+                        this.roundCount = 1;
+                        this.processState();
+                    }, START_TIME);
+                }
 
                 if(this.numPlayers < MIN_PLAYERS){
                     this.state = states['idle'];
@@ -157,8 +160,8 @@ module.exports = class serverGame{
                     this.currentGameId = this.rankList.atIndex(this.currentPlayerIndex).getPlayerId;
                     this.currentSocketId = this.getSocketId(this.currentGameId);
                     this.currentSocket = this.io.sockets.sockets.get(this.currentSocketId);
-                    console.log("Player picked:", this.currentGameId,this.currentSocketId);
-                    let wordChoices = this.wordList.randomWordPick(3);
+                    console.log("Drawer GameId:", this.currentGameId, ", SocketId",this.currentSocketId);
+                    let wordChoices = this.wordList.randomWordPick(NUM_RANDWORDS);
                     this.currentSocket.emit("server_pickWord",{"wordChoices":wordChoices},(response)=>{
                         if(wordChoices.includes(response)){
                             clearTimeout(this.currentTimerId);
@@ -169,21 +172,21 @@ module.exports = class serverGame{
                             return;
                         }
                     });
-                }
 
-                this.currentTimerId = setTimeout(() => {
-                    if(this.currentPlayerIndex == 0){
-                        this.state = states['roundEnd'];
+                    this.currentTimerId = setTimeout(() => {
+                        if(this.currentPlayerIndex == 0){
+                            this.state = states['roundEnd'];
+                            this.processState();
+                            return;
+                        }
+                        this.currentPlayerIndex--;
+                        this.currentGameId = this.rankList.atIndex(this.currentPlayerIndex).getPlayerId;
+                        this.oldState = null;
+                        this.state = states['pickPlayer'];
                         this.processState();
                         return;
-                    }
-                    this.currentPlayerIndex--;
-                    this.currentGameId = this.rankList.atIndex(this.currentPlayerIndex).getPlayerId;
-                    this.oldState = null;
-                    this.state = states['pickPlayer'];
-                    this.processState();
-                    return;
-                }, PICK_TIME);
+                    }, PICK_TIME);
+                }
 
                 if(event == "disconnectPlayer"){
                     //If player picking the word leaves
@@ -215,19 +218,19 @@ module.exports = class serverGame{
                 if(firstEntry){
                     this.removeTimeout();
                     this.io.emit("server_drawPhase", {"wordLength": this.currentWord.length, "drawer":this.currentGameId});
+                
+                    this.currentTimerId = setTimeout(() => {
+                        if(this.currentPlayerIndex == 0){
+                            this.state = states['roundEnd'];
+                        }else{
+                            this.state = states['pickPlayer'];
+                            this.currentPlayerIndex--;
+                            this.currentGameId = this.rankList.atIndex(this.currentPlayerIndex).getPlayerId;
+                        }
+                        this.processState();
+                        return;
+                    }, DRAW_TIME);
                 }
-
-                this.currentTimerId = setTimeout(() => {
-                    if(this.currentPlayerIndex == 0){
-                        this.state = states['roundEnd'];
-                    }else{
-                        this.state = states['pickPlayer'];
-                        this.currentPlayerIndex--;
-                        this.currentGameId = this.rankList.atIndex(this.currentPlayerIndex).getPlayerId;
-                    }
-                    this.processState();
-                    return;
-                }, DRAW_TIME);
 
                 if(event == "disconnectPlayer"){
                     if(this.currentGameId == eventGameId){
@@ -261,13 +264,13 @@ module.exports = class serverGame{
                 if(firstEntry){
                     this.removeTimeout();
                     this.io.emit('server_gameEnd');
+                
+                    this.currentTimerId = setTimeout(()=>{
+                        this.state = states['gameStart'];
+                        this.processState();
+                        return;
+                    }, END_TIME)
                 }
-
-                setTimeout(()=>{
-                    this.state = states['gameStart'];
-                    this.processState();
-                    return;
-                }, END_TIME)
                 break;
             default:
                 console.error("UNKNOWN STATE REACHED! SHUTTING SERVER DOWN");

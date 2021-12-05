@@ -37,15 +37,9 @@ class timer {
    startTimer(time) {
      this.#defaultTime = time;
      this.#seconds = time;
-     if (this.#counter === false) {
-       this.#interval = window.setInterval(() => this.runTimer(),1000);
-       this.#counter = true;
-
-     } else {
-       window.clearInterval(this.#interval);
-       this.#counter = false;
-     }
-
+     window.clearInterval(this.#interval);
+     this.#interval = window.setInterval(() => this.runTimer(),1000);
+     this.#counter = true;
      this.runTimer();
    }
 
