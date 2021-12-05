@@ -39,12 +39,10 @@ class timer {
      this.#seconds = time;
      if (this.#counter === false) {
        this.#interval = window.setInterval(() => this.runTimer(),1000);
-       document.getElementById("startTimer").innerText = "Stop";
        this.#counter = true;
 
      } else {
        window.clearInterval(this.#interval);
-       document.getElementById("startTimer").innerText = "Start";
        this.#counter = false;
      }
 
@@ -53,11 +51,8 @@ class timer {
 
     resetTimer() {
       window.clearInterval(this.#interval);
-      this.#seconds = this.#defaultTime;
-      this.timer.innerHTML = this.#defaultTime;
+      this.timer.innerHTML = "";
       this.timerBox.style.background = `green`;
-      document.getElementById("startTimer").innerHTML = "Start"
-
   }
 
   getTime(){

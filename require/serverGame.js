@@ -11,16 +11,16 @@ function createEnum(values) {
 }
 
 const states = createEnum(['idle', 'gameStart', 'roundBegin', 'pickPlayer', 'drawPhase', 'roundEnd', 'gameEnd']);
-const min_players= 2;
+const MIN_PLAYERS= 2;
 //time before game starts with sufficient players
-const start_time = 10000;
+const START_TIME = 10000;
 //time before game restarts after game ends
-const end_time = 10000;
+const END_TIME = 10000;
 //time for selecting a word
-const pick_time = 10000;
+const PICK_TIME = 10000;
 //time for drawing
-const draw_time = 35000;
-const total_rounds = 3;
+const DRAW_TIME = 35000;
+const TOTAL_ROUNDS = 3;
 
 module.exports = class serverGame{
     rankList = new rankListClass;
@@ -111,11 +111,13 @@ module.exports = class serverGame{
                     this.io.emit('server_idle');
                 }
 
-                if(this.numPlayers >= min_players){
-                    this.io.emit('server_idle');
-                    this.state = states['gameStart'];
-                    this.processState();
-                    return;
+                if(event == "newPlayer"){
+                    if(this.numPlayers >= MIN_PLAYERS){
+                        this.io.emit('server_idle');
+                        this.state = states['gameStart'];
+                        this.processState();
+                        return;
+                    }
                 }
                 break;  
             case states['gameStart']:
@@ -128,13 +130,14 @@ module.exports = class serverGame{
                     this.state = states['roundBegin'];
                     this.roundCount = 1;
                     this.processState();
-                }, start_time);
+                }, START_TIME);
 
-                if(this.numPlayers < min_players){
+                if(this.numPlayers < MIN_PLAYERS){
                     this.state = states['idle'];
                     this.processState();
                     return;
                 }
+                
                 break;
             case states['roundBegin']:
                 if(firstEntry){
@@ -180,9 +183,10 @@ module.exports = class serverGame{
                     this.state = states['pickPlayer'];
                     this.processState();
                     return;
-                }, pick_time);
+                }, PICK_TIME);
 
                 if(event == "disconnectPlayer"){
+                    //If player picking the word leaves
                     if(this.currentGameId == eventGameId){
                         if(this.currentPlayerIndex == 0){
                             this.state = states['roundEnd'];
@@ -197,6 +201,7 @@ module.exports = class serverGame{
                         return;
                     }
 
+                    //Check if someone who hasn't drawn yet leaves
                     let newIndex= this.rankList.getIndex(eventGameId);
                     if(newIndex != null){
                         if(newIndex < this.currentPlayerIndex){
@@ -211,6 +216,7 @@ module.exports = class serverGame{
                     this.removeTimeout();
                     this.io.emit("server_drawPhase", {"wordLength": this.currentWord.length, "drawer":this.currentGameId});
                 }
+
                 this.currentTimerId = setTimeout(() => {
                     if(this.currentPlayerIndex == 0){
                         this.state = states['roundEnd'];
@@ -221,7 +227,20 @@ module.exports = class serverGame{
                     }
                     this.processState();
                     return;
-                }, draw_time);
+                }, DRAW_TIME);
+
+                if(event == "disconnectPlayer"){
+                    if(this.currentGameId == eventGameId){
+                        if(this.currentPlayerIndex == 0){
+                            this.state = states['roundEnd'];
+                        }else{
+                            this.state = states['pickPlayer'];
+                            this.currentPlayerIndex--;
+                        }
+                        this.processState();
+                        return;
+                    }
+                }
                 break;
             case states['roundEnd']:
                 if(firstEntry){
@@ -230,7 +249,7 @@ module.exports = class serverGame{
                     this.roundCount++;
                 }
 
-                if(this.numPlayers < min_players || this.roundCount > total_rounds){
+                if(this.numPlayers < MIN_PLAYERS || this.roundCount > TOTAL_ROUNDS){
                     this.state = states['gameEnd'];
                 }else{
                     this.state = states['roundBegin'];
@@ -248,10 +267,10 @@ module.exports = class serverGame{
                     this.state = states['gameStart'];
                     this.processState();
                     return;
-                }, end_time)
+                }, END_TIME)
                 break;
             default:
-                console.error("UNKNOWN STATE REACHED! QUITTING");
+                console.error("UNKNOWN STATE REACHED! SHUTTING SERVER DOWN");
                 process.exit();
         }
 

@@ -1,12 +1,21 @@
 /*
 Client-side js.
 */
+//time before game starts with sufficient players
+const START_TIME = 10000 / 1000;
+//time before game restarts after game ends
+const END_TIME = 10000 / 1000;
+//time for selecting a word
+const PICK_TIME = 10000 / 1000;
+//time for drawing
+const DRAW_TIME = 35000 / 1000;
+//total rounds
+const TOTAL_ROUNDS = 3;
+
+
 var socket = io();
 var g;
 var splash = new splashscreen();
-var drawTime = 30;
-var choiceTime = 10;
-var gameStartTime = 10;
 function addListeners(){
 
     splash.loginForm.addEventListener('submit', (e)=>{
@@ -96,47 +105,45 @@ socket.on('chatMessage', function(data){
 });
 
 socket.on("server_idle",function(){
+    g.timer.resetTimer();
     g.chat.addServerMessage("Waiting for more players..");
 });
 
 socket.on("server_gameStart",function(){
-    g.timer.startTimer(gameStartTime);
+    g.timer.startTimer(START_TIME);
     g.chat.addServerMessage("Starting game soon..");
 });
 
 socket.on("server_roundBegin",function(num){
-    g.timer.startTimer(drawTime);
+    g.timer.resetTimer();
     console.log("round", num, "begins");
-    g.chat.addServerMessage("Round " + (num+1) + " begins!");
+    g.chat.addServerMessage("Round " + num + " begins!");
 });
 
 socket.on("server_pickPlayer",function(id){
     g.canvas.makeUnactive();
+    g.timer.startTimer(PICK_TIME);
     g.chat.addServerMessage("Player " + id + " is choosing a word!");
 });
 
-socket.on("server_receiveDraw", function(data){
-    let gameId = data["drawer"], wordLength = data["wordLength"];
-    let userName = g.rankList.getUsername(gameId);
-    console.log("Receiving draw data from", userName);
-    g.chat.addServerMessage(userName + " is drawing.");
-    g.guessProgress.startGuessWord(wordLength);
-});
-
-
-socket.on ("server_startDraw", (data,callback) =>{
-
-    g.timer.startTimer(choiceTime);
-    g.canvas.makeActive();
+socket.on("server_pickWord",(data,callback) =>{
     console.log(data);
     callback(data["wordChoices"][0]);
 });
 
+socket.on("server_drawPhase", function(data){
+    let gameId = data["drawer"], wordLength = data["wordLength"];
+    let userName = g.rankList.getUsername(gameId);
+    console.log("Receiving draw data from", userName);
+    g.timer.startTimer(DRAW_TIME);
+    g.chat.addServerMessage(userName + " is drawing.");
+    g.guessProgress.startGuessWord(wordLength);
+});
 
 socket.on("server_roundEnd",function(num){
-  console.log("round", num, "ended");
-  g.chat.addServerMessage("Round " + num + " ended!");
-
+    console.log("round", num, "ended");
+    g.timer.resetTimer();
+    g.chat.addServerMessage("Round " + num + " ended!");
 });
 
 socket.on("server_gameEnd",function(){
