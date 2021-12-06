@@ -1,5 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Righteous&display=swap');
 
+#container {
+  position: relative;
+}
+#container canvas, #overlay {
+  text-align: center;
+  position: absolute;
+  padding-top: 200;
+}
+
 
 #canvasArea
 {
@@ -91,7 +100,7 @@ body {
     font-size: 2.5vw;
     color:red;
     background-color: green;
-    
+
 }
 
 .extraRound{
