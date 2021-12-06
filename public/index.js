@@ -158,30 +158,40 @@ socket.on("server_pickPlayer",function(id){
 socket.on("server_pickWord",(data,callback) =>{
     console.log(data);
     document.getElementById("overlay").style.display = "initial";
-    var button1 = document.getElementById('word1');
-    button1.innerText = data["wordChoices"][0];
-    var button2 = document.getElementById('word2');
-    button2.innerText = data["wordChoices"][1];
-    var button3 = document.getElementById('word3');
-    button3.innerText = data["wordChoices"][2];
+    var choice = "SKETCHFETCH";
+    var chosen = false;
+    document.getElementById('word1').innerText = data["wordChoices"][0];
+    document.getElementById('word2').innerText = data["wordChoices"][1];
+    document.getElementById('word3').innerText = data["wordChoices"][2];
 
-    button1.addEventListener('click', function() {
-      choice = button1.innerText;
+
+    document.getElementById('word1').addEventListener('click', function() {
+      choice = data["wordChoices"][0];
+      chosen = true;
+      document.getElementById("overlay").style.display = "none";
       callback(choice);
     });
 
-    button2.addEventListener('click', function() {
-      choice = button2.innerText;
+    document.getElementById('word2').addEventListener('click', function() {
+      choice = data["wordChoices"][1];
+      chosen = true;
+      document.getElementById("overlay").style.display = "none";
       callback(choice);
     });
 
-    button3.addEventListener('click', function() {
-      choice = button3.innerText;
+    document.getElementById('word3').addEventListener('click', function() {
+      choice = data["wordChoices"][2];
+      chosen = true;
+      document.getElementById("overlay").style.display = "none";
       callback(choice);
     });
-
-    //let choice = data["wordChoices"][0];
-    //callback(choice);
+    /*
+    if(chosen == false)
+    {
+      choice = data["wordChoices"][0];
+      callback(choice);
+    }
+    */
     g.guessProgress.updateGuessWord(choice);
 });
 
