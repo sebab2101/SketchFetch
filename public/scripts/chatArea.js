@@ -4,6 +4,7 @@ class chatArea{
     chatForm;
     chatInput;
     gameId;
+    player;
     rankList;
     constructor(myId,myList){
         this.chatBox = document.querySelector("#chatBox");
@@ -13,12 +14,16 @@ class chatArea{
         this.chatForm = chatBox.querySelector("#chatForm");
         this.gameId = myId;
         this.rankList = myList;
+        this.player = this.rankList.getPlayer(this.gameId);
         this.addListeners();
     }
 
-    addMessage(userName, msg){
+    addMessage(userName, msg,type = "allRoom"){
         var item = document.createElement('li');
         item.innerHTML = "<b>" +userName+ ": </b> " + msg;
+        if(type == "correctRoom"){
+            item.classList.add("correctRoom");
+        }
         this.chatMessages.appendChild(item);
         this.scroll();
     }
@@ -42,7 +47,11 @@ class chatArea{
         this.chatForm.addEventListener('submit', (e) => {
             e.preventDefault();
             if (this.chatInput.value) {
-              this.addMessage(this.rankList.getUsername(this.gameId),this.chatInput.value);
+              if(this.player.isDrawer() || this.player.getGuessed){
+                this.addMessage(this.player.getName,this.chatInput.value, "correctRoom");
+              }else{
+                this.addMessage(this.player.getName,this.chatInput.value);
+              }
               socket.emit('chatMessage', {"gameId":this.gameId, "message":this.chatInput.value});
               this.chatInput.value = '';
             }

@@ -34,7 +34,7 @@
                 </div>
                 <div class="col-md-6">
                     <div id="guessProgressBox" class = "row mx-0 mb-2 border rounded-3 roundBlock">
-                        <div id ="guessWord" class="my-0 text-center align-self-middle">
+                        <div id ="guessWord" class="my-0 text-center align-self-middle whiteOutText">
 
                         </div>
                     </div>
@@ -89,12 +89,12 @@
                 <div class="col-md-1"></div>
                 <div class="col-md-2"></div>
                 <div  class ="col-md-6">
-                    <div id = "drawBox" class="px-0 py-0">
-                        <div id = "drawBrushBox" class="roundBlock">
+                    <div id = "drawBox" class="px-0 py-0 roundBlock">
+                        <div id = "drawBrushBox">
                             <div class="row mx-auto">
                                 <div class="col-md-5">
                                     <div  id="brushColorSelect"  class="row px-2">
-                                        <div  class="whiteOutText">Choose Brush Color</div>
+                                        <div>Choose Brush Color</div>
                                         <div id="green-brush" class="colorSelectBox mx-1"></div>
                                         <div id="blue-brush" class="colorSelectBox mx-1"></div>
                                         <div id="red-brush" class="colorSelectBox mx-1"></div>
@@ -106,13 +106,13 @@
                             </div>
                             <div class="col-md-2">
                                 <div class="row px-2">
-                                    <div class="whiteOutText">Eraser</div>
+                                    <div>Eraser</div>
                                     <div id="eraser-brush" class="colorSelectBoxBig mx-1"></div>
                                 </div>
                             </div>
                             <div class="col-md-5">
                                 <div id = "brushSizeSelect">
-                                    <label for="brushSizeRange" class="form-label mb-0 whiteOutText">Chose Brush Size</label>
+                                    <label for="brushSizeRange" class="form-label mb-0">Chose Brush Size</label>
                                     <input type="range" class="form-range" min="2" max="14" value="2" step="1" id="brushSizeRange">
                                 </div>
                             </div>
@@ -121,7 +121,7 @@
                                 <div class="row mx-auto">
                                     <div class="col-md-5">
                                         <div id = "backgroundColorSelect" class="row px-2 pb-4">
-                                            <div class="whiteOutText">Choose Background Color</div>
+                                            <div>Choose Background Color</div>
                                             <div id="green-bg" class="colorSelectBox mx-1"></div>
                                             <div id="blue-bg" class="colorSelectBox mx-1"></div>
                                             <div id="red-bg" class="colorSelectBox mx-1"></div>
@@ -137,9 +137,11 @@
 
                         <div id="drawButtonBox">
                             <div id = "drawButtonSelect" class="row mx-auto">
-                                <div class="col-md-5">
+                                <div class="col-md-12">
                                     <div class="row px-2 pb-1">
-                                    <input type="button" value="clear" id="clearCanvasButton" size="30">
+                                    <button type="button" class= "btn btn-success"id="clearCanvasButton">
+                                        CLEAR
+                                    </button>
                                     </div>
                                 </div>
                             </div>

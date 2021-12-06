@@ -45,6 +45,22 @@ class player{  // TESTED
     return this.#status;
   }
 
+  isDrawer(){
+    return (this.#status == "drawer");
+  }
+  
+  makeDrawer(){
+    this.#status = "drawer";
+  }
+
+  changeStatus(newStatus) {
+    this.#status = newStatus;
+  }
+
+  resetDrawStatus(){
+    this.#status = "guesser";
+  }
+
   get getParams(){
     return [this.#name,
             this.#playerId,
@@ -54,9 +70,6 @@ class player{  // TESTED
             this.#place];
   }
 
-  changeStatus(newStatus) {
-    this.#status = newStatus;
-  }
 
   changePlace(newPlace) {
     this.#place = newPlace;

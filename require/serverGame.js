@@ -1,6 +1,13 @@
 const wordListClass = require('./wordList.js');
 const playerClass = require('../public/scripts/player.js');
 const rankListClass = require('../public/scripts/rankList.js');
+let canvasAvailable;
+try{
+    const canvasServerClass = require('./canvasServer.js');
+    canvasAvailable = true;
+}catch{
+    canvasAvailable = false;
+}
 
 function createEnum(values) {
 	const enumObject = {};
@@ -38,10 +45,15 @@ module.exports = class serverGame{
     currentSocketId;
     currentSocket;
     currentTimerId;
+    rightGuesses=1;
     //initial state
     state = states['idle'];
     oldState = states['idle'];
+
     constructor(){
+        if(canvasAvailable){
+            this.canvas = new canvasServerClass(true);
+        }
     }
 
     setIo(io){
@@ -79,6 +91,10 @@ module.exports = class serverGame{
         return this.clientRevMap.get(gameId);
     }
 
+    getSocket(socketId){
+        return this.io.sockets.sockets.get(socketId);
+    }
+
     getRankList(){
         return this.rankList.makeList()
     }
@@ -91,12 +107,39 @@ module.exports = class serverGame{
         return this.rankList.getNumOfPlayers;
     }
 
+    resetChatRooms(){
+        Array.from(this.clientMap.keys()).forEach(socketId => {
+            let socket = this.getSocket(socketId);
+            if(socket != undefined){
+
+            socket.leave("correctPlayers");
+            }
+        });
+    }
+
+    hasGuessWord(chatMessage){
+        if(this.state != states['drawPhase']){
+            return false;
+        }
+        let words = chatMessage.split(" ");
+        if(words.includes(this.currentWord)){
+            return true;
+        }
+        return false;
+    }
+
     //destroy inbound setTimeout function
     removeTimeout(){
         if(this.currentTimerId){
             clearTimeout(this.currentTimerId);
             this.currentTimerId = null;
         }
+    }
+
+    //If player guesses right
+    someoneGuessedRight(){
+        this.rightGuesses++;
+        this.processState();
     }
 
     processState = (event = null, eventGameId = null)=>{
@@ -156,10 +199,14 @@ module.exports = class serverGame{
             case states['pickPlayer']:
                 if(firstEntry){
                     this.removeTimeout();
-                    this.io.emit('server_pickPlayer', this.currentGameId);
+                    if(canvasAvailable){
+                        this.canvas.eraseImmediate();
+                    }
+                    this.rankList.resetAllStatus();
                     this.currentGameId = this.rankList.atIndex(this.currentPlayerIndex).getPlayerId;
                     this.currentSocketId = this.getSocketId(this.currentGameId);
-                    this.currentSocket = this.io.sockets.sockets.get(this.currentSocketId);
+                    this.currentSocket = this.getSocket(this.currentSocketId);
+                    this.io.emit('server_pickPlayer', this.currentGameId);
                     console.log("Drawer GameId:", this.currentGameId, ", SocketId",this.currentSocketId);
                     let wordChoices = this.wordList.randomWordPick(NUM_RANDWORDS);
                     this.currentSocket.emit("server_pickWord",{"wordChoices":wordChoices},(response)=>{
@@ -218,7 +265,11 @@ module.exports = class serverGame{
                 if(firstEntry){
                     this.removeTimeout();
                     this.io.emit("server_drawPhase", {"wordLength": this.currentWord.length, "drawer":this.currentGameId});
-                
+                    this.currentSocket.join("correctPlayers");
+                    this.rightGuesses = 1;
+                    let player = this.rankList.getPlayer(this.currentGameId);
+                    player.rightGuessed();
+                    player.makeDrawer();
                     this.currentTimerId = setTimeout(() => {
                         if(this.currentPlayerIndex == 0){
                             this.state = states['roundEnd'];
@@ -227,6 +278,7 @@ module.exports = class serverGame{
                             this.currentPlayerIndex--;
                             this.currentGameId = this.rankList.atIndex(this.currentPlayerIndex).getPlayerId;
                         }
+                        this.resetChatRooms();
                         this.processState();
                         return;
                     }, DRAW_TIME);
@@ -240,9 +292,38 @@ module.exports = class serverGame{
                             this.state = states['pickPlayer'];
                             this.currentPlayerIndex--;
                         }
+                        this.resetChatRooms();
                         this.processState();
                         return;
                     }
+
+                    //Check if someone who hasn't drawn yet leaves
+                    let newIndex= this.rankList.getIndex(eventGameId);
+                    if(newIndex != null){
+                        if(newIndex < this.currentPlayerIndex){
+                            this.currentPlayerIndex--;
+                        }
+                    }
+                }
+
+                if(event  == "newPlayer"){
+                    if(canvasAvailable){
+                        let tempSocket = this.getSocket(this.getSocketId(eventGameId));
+                        let canvasImage = this.canvas.sendImage();
+                        tempSocket.emit("canvasImage", {"image":canvasImage , "brushColor": this.canvas.drawColor});
+                    }
+                }
+
+                if(this.rightGuesses == this.numPlayers){
+                    if(this.currentPlayerIndex == 0){
+                        this.state = states['roundEnd'];
+                    }else{
+                        this.state = states['pickPlayer'];
+                        this.currentPlayerIndex--;
+                    }
+                    this.resetChatRooms();
+                    this.processState();
+                    return;
                 }
                 break;
             case states['roundEnd']:
@@ -270,6 +351,12 @@ module.exports = class serverGame{
                         this.processState();
                         return;
                     }, END_TIME)
+                }
+
+                if(this.numPlayers==0){
+                    this.state = states['idle'];
+                    this.processState();
+                    return;
                 }
                 break;
             default:

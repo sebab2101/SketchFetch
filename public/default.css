@@ -17,6 +17,7 @@
 
 #drawBox
 {
+    color:white;
     border:2px solid;;
 }
 
@@ -37,10 +38,6 @@
     height:30px;
     border:2px solid;
     background-color: blanchedalmond;
-}
-
-#drawBrushBox, #drawBackgroundBox, #drawButtonBox{
-    background-color:rgba(245,245,245,0.6);
 }
 
 #green-brush,#green-bg
@@ -119,10 +116,8 @@ body {
 
 
 .roundBlock{
-    /* background-color:rgba(138, 43, 226,0.9); */
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.7);
     height:100%;
-
 }
 
 #chatForm{
@@ -166,7 +161,7 @@ body {
 #chatMessages, #rankList {
     list-style-type: none;
     margin: 0;
-    padding: 0.4rem;
+    padding: 0rem;
 }
 
 #chatMessages> li {
@@ -186,9 +181,19 @@ body {
 #chatMessages > li:nth-child(odd).serverMessage{ background: #F2003C; }
 
 
+#rankList> li {
+     background: lightblue; 
+     border: 1px solid black;
+     border-radius: 5px;
+     margin-top: 0.2rem;
+     margin-bottom: 0.2rem;
+     padding-top: 0.2rem;
+     padding-bottom: 0.2rem;
+     font-size: 1.2rem;
+    }
+#rankList > li.correctPlayer{ background: lightgreen; }
+#rankList > li.drawer{ background: #F08080; }
 
-#rankList> li { background: white; }
-#rankList> li:nth-child(odd) { background: lightblue; }
 
 #chatBox, #rankBox {
     position: relative;
@@ -215,7 +220,6 @@ body {
 }
 
 #guessWord {
-    background: #E3D6E9;
     font-family: monospace;
     letter-spacing: 1rem;
     text-transform: uppercase;

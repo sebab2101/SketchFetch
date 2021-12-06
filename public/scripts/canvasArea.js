@@ -280,5 +280,18 @@ class canvasArea{
             this.ctx.drawImage(imageObject,0,0,this.canvasWidth,this.canvasHeight);
         }   
     }
+
+    serverImage(imageBuffer){
+        var blob = new Blob([imageBuffer], {type: 'image/png'});
+        var url = URL.createObjectURL(blob);
+        var img = new Image;
+        img.src = url;
+
+        img.onload = ()=>{
+            console.log(img);
+            this.ctx.drawImage(img,0,0,this.canvasWidth,this.canvasHeight,);
+            URL.revokeObjectURL(url);
+        }
+    }
 }
 

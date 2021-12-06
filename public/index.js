@@ -34,6 +34,7 @@ function addListeners(){
                 g.chat.chatBox.style.height = height;
                 g.rankListDisplay.rankingBox.style.height = height;
             });
+            addSocketEvents();
         }
     });
 }
@@ -48,6 +49,9 @@ let toggleDraw = () => {
     }
 }
 //Socket receive stuff here
+
+
+function addSocketEvents(){
 socket.on('error', function (e) {
     console.error('Connection Error:', e);
 });
@@ -97,12 +101,35 @@ socket.on('brushSizeCanvas', function(data) {
     g.canvas.changeDrawSize(data["brushSize"]);
 });
 
+socket.on('canvasImage', function(data){
+    let image = data["image"];
+    console.log("receiving image: ", image);
+    g.canvas.serverImage(image);
+    g.canvas.color(data["brushColor"]);
+});
+
 socket.on('chatMessage', function(data){
     console.log("Message received (Client):", data);
-    let userName = g.rankList.getUsername(data['gameId']);
-    if(userName != null){
-        g.chat.addMessage(userName,data['message']);
+    let gameId =data['gameId'];
+    let player = g.rankList.getPlayer(gameId);
+    if(player != null){
+        let userName = player.getName ,type = "allRoom";
+        if(player.getGuessed){
+            type = "correctRoom";
+        }
+        g.chat.addMessage(userName,data['message'],type);
     }
+});
+
+socket.on('correctGuess',function(gameId){
+    let player = g.rankList.getPlayer(gameId)
+    let userName = player.getName;
+    console.log(userName, "guessed correctly.");
+    if(userName != null){
+        g.chat.addServerMessage(userName+ " guessed correctly!");
+    }
+    player.rightGuessed();
+    g.rankListDisplay.updateRankDisplay();
 });
 
 socket.on("server_idle",function(){
@@ -123,6 +150,7 @@ socket.on("server_roundBegin",function(num){
 
 socket.on("server_pickPlayer",function(id){
     g.canvas.makeUnactive();
+    g.rankList.resetAllStatus();
     g.timer.startTimer(PICK_TIME);
     g.chat.addServerMessage("Player " + g.rankList.getUsername(id) + " is choosing a word!");
 });
@@ -159,17 +187,25 @@ socket.on("server_pickWord",(data,callback) =>{
 
 socket.on("server_drawPhase", function(data){
     let gameId = data["drawer"], wordLength = data["wordLength"];
-    let userName = g.rankList.getUsername(gameId);
+    let player = g.rankList.getPlayer(gameId);
+    let userName = player.getName;
     console.log("Receiving draw data from", userName);
     g.timer.startTimer(DRAW_TIME);
     g.chat.addServerMessage(userName + " is drawing.");
+
+    g.guessProgress.startGuessWord(wordLength);
+    player.rightGuessed();
+    player.makeDrawer();
     if(g.player.getPlayerId == gameId)
     {
-      g.canvas.makeActive();
+        g.canvas.makeActive();
     }
     else {
       g.guessProgress.startGuessWord(wordLength);
     }
+
+    g.rankListDisplay.updateRankDisplay();
+
 });
 
 socket.on("server_roundEnd",function(num){
@@ -181,6 +217,6 @@ socket.on("server_roundEnd",function(num){
 socket.on("server_gameEnd",function(){
     g.chat.addServerMessage("Game Over! Thanks for playing!");
 });
-
+}
 //startTimer = (time)=>g.timer.startTimer(time);
 //resetTimer = (time)=>g.timer.resetTimer(time);
