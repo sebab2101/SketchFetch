@@ -79,6 +79,7 @@ class socketEvents{
                     game.someoneGuessedRight();
                     socket.join("correctPlayers");
                     this.io.to("activePlayers").emit('correctGuess',data['gameId']);
+                    game.rankList.getPlayer(data['gameId']).rightGuessed();
                 }else{
                     socket.to("activePlayers").emit('chatMessage',data);
                 }

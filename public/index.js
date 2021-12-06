@@ -110,12 +110,13 @@ socket.on('chatMessage', function(data){
 });
 
 socket.on('correctGuess',function(gameId){
-    let userName = g.rankList.getUsername(gameId);
+    let player = g.rankList.getPlayer(gameId)
+    let userName = player.getName;
     console.log(userName, "guessed correctly.");
     if(userName != null){
         g.chat.addServerMessage(userName+ " guessed correctly!");
     }
-    g.rankList.getPlayer(gameId).rightGuessed();
+    player.rightGuessed();
     g.rankListDisplay.updateRankDisplay();
 });
 

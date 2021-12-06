@@ -10,12 +10,18 @@ class rankListDisplay{
   }
 
   updateRankDisplay(){
+    this.rankList.sortRankList();
     this.rankedPlayers.innerHTML="";
     let k = this.rankList.allPlayers;
     for (var i=0; i<k.length; i++)
     {
       var item = document.createElement('li');
-      item.innerHTML = "<div>" + "#"+ k[i].getPlace + "</div><div>" + k[i].getName + "</div><div align = 'right'>" + k[i].getScore+ "</div>";
+      item.innerHTML = 
+      `<li class="row mx-0">
+        <div class="col-md-3 px-0">#`+ k[i].getPlace +`</div>
+        <div class="col-md-6 px-0 text-break">`+ k[i].getName + `</div>
+        <div class="col-md-3 px-0 text-break" align="right">` + k[i].getScore+`</div>
+      </li>`;
       if(k[i].isDrawer()){
         item.classList.add("drawer");
       }else if(k[i].getGuessed){
@@ -23,6 +29,5 @@ class rankListDisplay{
       }
       this.rankedPlayers.appendChild(item);
     }
-
   }
 }

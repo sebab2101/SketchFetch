@@ -185,10 +185,11 @@ module.exports = class serverGame{
             case states['pickPlayer']:
                 if(firstEntry){
                     this.removeTimeout();
-                    this.io.emit('server_pickPlayer', this.currentGameId);
+                    this.rankList.resetAllStatus();
                     this.currentGameId = this.rankList.atIndex(this.currentPlayerIndex).getPlayerId;
                     this.currentSocketId = this.getSocketId(this.currentGameId);
                     this.currentSocket = this.getSocket(this.currentSocketId);
+                    this.io.emit('server_pickPlayer', this.currentGameId);
                     console.log("Drawer GameId:", this.currentGameId, ", SocketId",this.currentSocketId);
                     let wordChoices = this.wordList.randomWordPick(NUM_RANDWORDS);
                     this.currentSocket.emit("server_pickWord",{"wordChoices":wordChoices},(response)=>{
@@ -249,6 +250,9 @@ module.exports = class serverGame{
                     this.io.emit("server_drawPhase", {"wordLength": this.currentWord.length, "drawer":this.currentGameId});
                     this.currentSocket.join("correctPlayers");
                     this.rightGuesses = 1;
+                    let player = this.rankList.getPlayer(this.currentGameId);
+                    player.rightGuessed();
+                    player.makeDrawer();
                     this.currentTimerId = setTimeout(() => {
                         if(this.currentPlayerIndex == 0){
                             this.state = states['roundEnd'];
