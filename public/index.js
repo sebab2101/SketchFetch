@@ -158,41 +158,46 @@ socket.on("server_pickPlayer",function(id){
 socket.on("server_pickWord",(data,callback) =>{
     console.log(data);
     document.getElementById("overlay").style.display = "initial";
-    var choice = "SKETCHFETCH";
-    var chosen = false;
+    var choice = "";
     document.getElementById('word1').innerText = data["wordChoices"][0];
     document.getElementById('word2').innerText = data["wordChoices"][1];
     document.getElementById('word3').innerText = data["wordChoices"][2];
 
+    let timeId = setTimeout(()=>{
+      console.log(data["wordChoices"][0]);
+      choice = data["wordChoices"][0];
+      document.getElementById("overlay").style.display = "none";
+      g.guessProgress.updateGuessWord(choice);
+      callback(choice);
+    }, PICK_TIME*900); //automatically chooses after 9 seconds
+
+
+
+    console.log(timeId);
 
     document.getElementById('word1').addEventListener('click', function() {
       choice = data["wordChoices"][0];
-      chosen = true;
       document.getElementById("overlay").style.display = "none";
       callback(choice);
+      clearTimeout(timeId);
+      g.guessProgress.updateGuessWord(choice);
     });
 
     document.getElementById('word2').addEventListener('click', function() {
       choice = data["wordChoices"][1];
-      chosen = true;
       document.getElementById("overlay").style.display = "none";
       callback(choice);
+      clearTimeout(timeId);
+      g.guessProgress.updateGuessWord(choice);
     });
 
     document.getElementById('word3').addEventListener('click', function() {
       choice = data["wordChoices"][2];
-      chosen = true;
       document.getElementById("overlay").style.display = "none";
       callback(choice);
+      clearTimeout(timeId);
+      g.guessProgress.updateGuessWord(choice);
     });
-    /*
-    if(chosen == false)
-    {
-      choice = data["wordChoices"][0];
-      callback(choice);
-    }
-    */
-    g.guessProgress.updateGuessWord(choice);
 });
 
 socket.on("server_drawPhase", function(data){
@@ -202,8 +207,6 @@ socket.on("server_drawPhase", function(data){
     console.log("Receiving draw data from", userName);
     g.timer.startTimer(DRAW_TIME);
     g.chat.addServerMessage(userName + " is drawing.");
-
-    g.guessProgress.startGuessWord(wordLength);
     player.rightGuessed();
     player.makeDrawer();
     if(g.player.getPlayerId == gameId)
