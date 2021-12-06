@@ -1,6 +1,13 @@
 const wordListClass = require('./wordList.js');
 const playerClass = require('../public/scripts/player.js');
 const rankListClass = require('../public/scripts/rankList.js');
+let canvasAvailable;
+try{
+    const canvasServerClass = require('./canvasServer.js');
+    canvasAvailable = true;
+}catch{
+    canvasAvailable = false;
+}
 
 function createEnum(values) {
 	const enumObject = {};
@@ -42,7 +49,11 @@ module.exports = class serverGame{
     //initial state
     state = states['idle'];
     oldState = states['idle'];
+
     constructor(){
+        if(canvasAvailable){
+            this.canvas = new canvasServerClass(true);
+        }
     }
 
     setIo(io){
@@ -99,7 +110,10 @@ module.exports = class serverGame{
     resetChatRooms(){
         Array.from(this.clientMap.keys()).forEach(socketId => {
             let socket = this.getSocket(socketId);
+            if(socket != undefined){
+
             socket.leave("correctPlayers");
+            }
         });
     }
 
@@ -185,6 +199,9 @@ module.exports = class serverGame{
             case states['pickPlayer']:
                 if(firstEntry){
                     this.removeTimeout();
+                    if(canvasAvailable){
+                        this.canvas.eraseImmediate();
+                    }
                     this.rankList.resetAllStatus();
                     this.currentGameId = this.rankList.atIndex(this.currentPlayerIndex).getPlayerId;
                     this.currentSocketId = this.getSocketId(this.currentGameId);
@@ -279,6 +296,22 @@ module.exports = class serverGame{
                         this.processState();
                         return;
                     }
+
+                    //Check if someone who hasn't drawn yet leaves
+                    let newIndex= this.rankList.getIndex(eventGameId);
+                    if(newIndex != null){
+                        if(newIndex < this.currentPlayerIndex){
+                            this.currentPlayerIndex--;
+                        }
+                    }
+                }
+
+                if(event  == "newPlayer"){
+                    if(canvasAvailable){
+                        let tempSocket = this.getSocket(this.getSocketId(eventGameId));
+                        let canvasImage = this.canvas.sendImage();
+                        tempSocket.emit("canvasImage", {"image":canvasImage , "brushColor": this.canvas.drawColor});
+                    }
                 }
 
                 if(this.rightGuesses == this.numPlayers){
@@ -318,6 +351,12 @@ module.exports = class serverGame{
                         this.processState();
                         return;
                     }, END_TIME)
+                }
+
+                if(this.numPlayers==0){
+                    this.state = states['idle'];
+                    this.processState();
+                    return;
                 }
                 break;
             default:

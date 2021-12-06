@@ -33,6 +33,7 @@ function addListeners(){
                 g.chat.chatBox.style.height = height;
                 g.rankListDisplay.rankingBox.style.height = height;
             });
+            addSocketEvents();
         }
     });
 }
@@ -47,6 +48,9 @@ let toggleDraw = () => {
     }
 }
 //Socket receive stuff here
+
+
+function addSocketEvents(){
 socket.on('error', function (e) {
     console.error('Connection Error:', e);
 });
@@ -94,6 +98,13 @@ socket.on('clearCanvas', function(data) {
 socket.on('brushSizeCanvas', function(data) {
     console.log("Change Brush size (Client):", data);
     g.canvas.changeDrawSize(data["brushSize"]);
+});
+
+socket.on('canvasImage', function(data){
+    let image = data["image"];
+    console.log("receiving image: ", image);
+    g.canvas.serverImage(image);
+    g.canvas.color(data["brushColor"]);
 });
 
 socket.on('chatMessage', function(data){
@@ -174,6 +185,6 @@ socket.on("server_roundEnd",function(num){
 socket.on("server_gameEnd",function(){
     g.chat.addServerMessage("Game Over! Thanks for playing!");
 });
-
+}
 //startTimer = (time)=>g.timer.startTimer(time);
 //resetTimer = (time)=>g.timer.resetTimer(time);
