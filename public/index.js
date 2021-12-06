@@ -158,7 +158,7 @@ socket.on("server_pickPlayer",function(id){
 socket.on("server_pickWord",(data,callback) =>{
     console.log(data);
     document.getElementById("overlay").style.display = "initial";
-    var choice;
+    var choice = "SKETCHFETCH";
     var chosen = false;
     document.getElementById('word1').innerText = data["wordChoices"][0];
     document.getElementById('word2').innerText = data["wordChoices"][1];
@@ -168,27 +168,30 @@ socket.on("server_pickWord",(data,callback) =>{
     document.getElementById('word1').addEventListener('click', function() {
       choice = data["wordChoices"][0];
       chosen = true;
+      document.getElementById("overlay").style.display = "none";
       callback(choice);
     });
 
     document.getElementById('word2').addEventListener('click', function() {
       choice = data["wordChoices"][1];
       chosen = true;
+      document.getElementById("overlay").style.display = "none";
       callback(choice);
     });
 
     document.getElementById('word3').addEventListener('click', function() {
       choice = data["wordChoices"][2];
       chosen = true;
+      document.getElementById("overlay").style.display = "none";
       callback(choice);
     });
-
+    /*
     if(chosen == false)
     {
       choice = data["wordChoices"][0];
       callback(choice);
     }
-
+    */
     g.guessProgress.updateGuessWord(choice);
 });
 
