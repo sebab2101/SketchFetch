@@ -2,8 +2,9 @@ const wordListClass = require('./wordList.js');
 const playerClass = require('../public/scripts/player.js');
 const rankListClass = require('../public/scripts/rankList.js');
 let canvasAvailable;
+let canvasServerClass;
 try{
-    const canvasServerClass = require('./canvasServer.js');
+    canvasServerClass = require('./canvasServer.js');
     canvasAvailable = true;
 }catch{
     canvasAvailable = false;
