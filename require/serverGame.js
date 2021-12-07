@@ -18,7 +18,7 @@ function createEnum(values) {
 	return Object.freeze(enumObject);
 }
 
-const states = createEnum(['idle', 'gameStart', 'roundBegin', 'pickPlayer', 'drawPhase', 'roundEnd', 'gameEnd']);
+const states = createEnum(['idle', 'gameStart', 'roundBegin', 'pickPlayer', 'drawPhase','drawEnd', 'roundEnd', 'gameEnd']);
 const MIN_PLAYERS= 2;
 //time before game starts with sufficient players
 const START_TIME = 10000;
@@ -51,7 +51,7 @@ module.exports = class serverGame{
     currentSocket;
     currentTimerId;
     roundTime;
-    rightGuesses=1;
+    rightGuesses=0;
     //initial state
     state = states['idle'];
     oldState = states['idle'];
@@ -227,6 +227,7 @@ module.exports = class serverGame{
                     this.currentSocket.emit("server_pickWord",{"wordChoices":wordChoices},(response)=>{
                         if(wordChoices.includes(response)){
                             clearTimeout(this.currentTimerId);
+                            this.initScoring();
                             console.log("Player picked: ", response);
                             this.state = states['drawPhase'];
                             this.currentWord = response;
