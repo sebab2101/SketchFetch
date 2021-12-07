@@ -19,6 +19,7 @@ var socket = io();
 var g;
 var splash = new splashscreen();
 document.getElementById("overlay").style.display = "none";
+document.getElementById("rankingOverlay").style.display = "none";
 function addListeners(){
 
     splash.loginForm.addEventListener('submit', (e)=>{
@@ -161,6 +162,7 @@ socket.on("server_pickPlayer",function(id){
 
 socket.on("server_pickWord",(data,callback) =>{
     console.log(data);
+    document.getElementById("rankingOverlay").style.display = "none";
     document.getElementById("overlay").style.display = "initial";
     var choice = "";
     document.getElementById('word1').innerText = data["wordChoices"][0];
@@ -183,7 +185,7 @@ socket.on("server_pickWord",(data,callback) =>{
         clearTimeout(timeId);
         g.guessProgress.updateGuessWord(choice);
       });
-  
+
       document.getElementById('word2').addEventListener('click', function() {
         choice = data["wordChoices"][1];
         document.getElementById("overlay").style.display = "none";
@@ -191,7 +193,7 @@ socket.on("server_pickWord",(data,callback) =>{
         clearTimeout(timeId);
         g.guessProgress.updateGuessWord(choice);
       });
-  
+
       document.getElementById('word3').addEventListener('click', function() {
         choice = data["wordChoices"][2];
         document.getElementById("overlay").style.display = "none";
@@ -205,6 +207,7 @@ socket.on("server_drawPhase", function(data){
     let gameId = data["drawer"], wordLength = data["wordLength"];
     let player = g.rankList.getPlayer(gameId);
     let userName = player.getName;
+    document.getElementById("rankingOverlay").style.display = "none";
     console.log("Receiving draw data from", userName);
     g.timer.startTimer(DRAW_TIME);
     g.chat.addServerMessage(userName + " is drawing.");
@@ -223,15 +226,30 @@ socket.on("server_drawPhase", function(data){
 });
 
 socket.on("server_drawEnd",function(data){
+
     let scoreMap = new Map(data["scoreMap"]);
     console.log(data["scoreMap"],scoreMap);
+    document.getElementById("rankingOverlay").style.display = "initial";
+    let t = document.getElementById("rankingTable");
+    g.timer.startTimer(DRAW_END_TIME);
+
+    const iterator1 = scoreMap.keys();
+    for (var i=0;i<scoreMap.size;i++){
+      var row = t.insertRow(i);
+      row.insertCell(0).innerHTML = i;
+      let s = iterator1.next().value;
+      row.insertCell(1).innerHTML = s;
+      row.insertCell(2).innerHTML = scoreMap.get(s);
+    }
+
+
     g.rankList.processScoresMap(scoreMap);
     g.rankList.changeRankings();
     g.rankListDisplay.updateRankDisplay();
 });
 
 socket.on("server_roundEnd",function(data){
-    g.timer.startTimer(DRAW_END_TIME);
+
     console.log("round", data["roundNumber"], "ended");
     g.rankListDisplay.updateRankDisplay();
     g.chat.addServerMessage("Round " + data["roundNumber"] + " ended!");
