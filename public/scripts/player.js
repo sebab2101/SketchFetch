@@ -34,7 +34,6 @@ class player{  // TESTED
 
   changeScore(points) {
     this.#score = this.#score + points;
-    return this.#score;
   }
 
   resetScore() {
