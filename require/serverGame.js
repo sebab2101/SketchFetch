@@ -28,6 +28,8 @@ const END_TIME = 10000;
 const PICK_TIME = 10000;
 //time for drawing
 const DRAW_TIME = 35000;
+//time for displaying results after each draw
+const DRAW_END_TIME = 5000;
 const TOTAL_ROUNDS = 3;
 //number of choices drawer gets to pick from
 const NUM_RANDWORDS = 3;
@@ -38,6 +40,8 @@ module.exports = class serverGame{
     clientMap = new Map;
     //game id to socket id map
     clientRevMap = new Map;
+    //game id to current round scores map
+    roundScoresMap = new Map;
     wordList = new wordListClass();
     io;
     roundCount = 1;
@@ -46,6 +50,7 @@ module.exports = class serverGame{
     currentSocketId;
     currentSocket;
     currentTimerId;
+    roundTime;
     rightGuesses=1;
     //initial state
     state = states['idle'];
@@ -137,10 +142,18 @@ module.exports = class serverGame{
         }
     }
 
+    //initialize scoring
+    initScoring(){
+        this.roundTime = new Date();
+        this.rightGuesses = 0;
+    }
+
     //If player guesses right
-    someoneGuessedRight(){
+    score(gameId){  
+        let t = new Date();
+        let points = (t-this.roundTime)/(1000*DRAW_TIME) *300 + this.rightGuesses/(this.numPlayers-1) * 200;
         this.rightGuesses++;
-        this.processState();
+        return points;
     }
 
     processState = (event = null, eventGameId = null)=>{
@@ -200,6 +213,7 @@ module.exports = class serverGame{
             case states['pickPlayer']:
                 if(firstEntry){
                     this.removeTimeout();
+                    this.roundScoresMap.clear();
                     if(canvasAvailable){
                         this.canvas.eraseImmediate();
                     }
@@ -208,7 +222,7 @@ module.exports = class serverGame{
                     this.currentSocketId = this.getSocketId(this.currentGameId);
                     this.currentSocket = this.getSocket(this.currentSocketId);
                     this.io.emit('server_pickPlayer', this.currentGameId);
-                    console.log("Drawer GameId:", this.currentGameId, ", SocketId",this.currentSocketId);
+                    console.log("Drawer GameId:", this.currentGameId, ",SocketId:",this.currentSocketId);
                     let wordChoices = this.wordList.randomWordPick(NUM_RANDWORDS);
                     this.currentSocket.emit("server_pickWord",{"wordChoices":wordChoices},(response)=>{
                         if(wordChoices.includes(response)){
@@ -267,19 +281,11 @@ module.exports = class serverGame{
                     this.removeTimeout();
                     this.io.emit("server_drawPhase", {"wordLength": this.currentWord.length, "drawer":this.currentGameId});
                     this.currentSocket.join("correctPlayers");
-                    this.rightGuesses = 1;
                     let player = this.rankList.getPlayer(this.currentGameId);
                     player.rightGuessed();
                     player.makeDrawer();
                     this.currentTimerId = setTimeout(() => {
-                        if(this.currentPlayerIndex == 0){
-                            this.state = states['roundEnd'];
-                        }else{
-                            this.state = states['pickPlayer'];
-                            this.currentPlayerIndex--;
-                            this.currentGameId = this.rankList.atIndex(this.currentPlayerIndex).getPlayerId;
-                        }
-                        this.resetChatRooms();
+                        this.state = states['drawEnd'];
                         this.processState();
                         return;
                     }, DRAW_TIME);
@@ -287,13 +293,7 @@ module.exports = class serverGame{
 
                 if(event == "disconnectPlayer"){
                     if(this.currentGameId == eventGameId){
-                        if(this.currentPlayerIndex == 0){
-                            this.state = states['roundEnd'];
-                        }else{
-                            this.state = states['pickPlayer'];
-                            this.currentPlayerIndex--;
-                        }
-                        this.resetChatRooms();
+                        this.state = states['drawEnd'];
                         this.processState();
                         return;
                     }
@@ -315,7 +315,21 @@ module.exports = class serverGame{
                     }
                 }
 
-                if(this.rightGuesses == this.numPlayers){
+                if(this.rightGuesses == this.numPlayers-1){
+                    this.state = states['drawEnd'];
+                    this.processState();
+                    return;
+                }
+                break;
+
+            case states['drawEnd']:
+                if(firstEntry){
+                    this.removeTimeout();
+                    this.io.emit('server_drawEnd', {"guessWord":this.currentWord, "scoreMap":this.roundScoresMap});
+                    this.rankList.processScoresMap(this.roundScoresMap);
+                }
+
+                this.currentTimerId = setTimeout(() => {
                     if(this.currentPlayerIndex == 0){
                         this.state = states['roundEnd'];
                     }else{
@@ -325,12 +339,12 @@ module.exports = class serverGame{
                     this.resetChatRooms();
                     this.processState();
                     return;
-                }
+                },DRAW_END_TIME);
                 break;
             case states['roundEnd']:
                 if(firstEntry){
                     this.removeTimeout();
-                    this.io.emit('server_roundEnd', this.roundCount);
+                    this.io.emit('server_roundEnd', {"roundCount":this.roundCount});
                     this.roundCount++;
                 }
 

@@ -78,6 +78,13 @@ class rankList{  //TESTED
     }
   }
 
+  processScoresMap(scoreMapJSON){
+    let scoreMap = new Map(Object.entries(scoreMapJSON));
+    scoreMap.forEach((value,key)=>{
+      this.getPlayer(key).changeScore(value);
+    });
+  }
+  
   getUsername(gameId){
     for (var i=0;i<this.#players.length;i++)
     {

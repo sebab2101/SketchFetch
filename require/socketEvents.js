@@ -91,10 +91,13 @@ class socketEvents{
             }else{
                 if(game.hasGuessWord(data['message'])){
                     console.log("Player SocketId:", socket.id, " guessed correctly!");
-                    game.someoneGuessedRight();
+                    let points = game.score(data['gameId']);
+                    let player = game.rankList.getPlayer(data['gameId']);
+                    game.roundScoresMap.set(data['gameId'], points);
                     socket.join("correctPlayers");
-                    this.io.to("activePlayers").emit('correctGuess',data['gameId']);
-                    game.rankList.getPlayer(data['gameId']).rightGuessed();
+                    this.io.to("activePlayers").emit('correctGuess',{"data":data['gameId']});
+                    player.rightGuessed();
+                    game.processState();
                 }else{
                     socket.to("activePlayers").emit('chatMessage',data);
                 }
