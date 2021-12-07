@@ -124,6 +124,9 @@ module.exports = class serverGame{
     }
 
     hasGuessWord(chatMessage){
+        chatMessage = chatMessage.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
+        chatMessage = chatMessage.replace(/\s{2,}/g," ");
+        chatMessage = chatMessage.toLowerCase();
         if(this.state != states['drawPhase']){
             return false;
         }

@@ -43,10 +43,15 @@ class rankList{  //TESTED
   changeRankings(){
     for (var i=0;i<this.#players.length;i++)
       {
-        this.#players[i].changePlace(i+1);
-        if(i>0 && this.#players[i].getScore == this.#players[i-1].getScore){
-          this.#players[i].changePlace(this.#players[i-1].getPlace);
-        }
+        if(i>0){
+          if(this.#players[i].getScore == this.#players[i-1].getScore){
+            this.#players[i].changePlace(this.#players[i-1].getPlace);
+          }else{   
+            this.#players[i].changePlace(this.#players[i-1].getPlace+1);
+          }
+       }else{
+         this.#players[i].changePlace(1);
+       }
 
       }
   }
