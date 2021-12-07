@@ -10,7 +10,6 @@ class rankListDisplay{
   }
 
   updateRankDisplay(){
-    this.rankList.sortRankList();
     this.rankedPlayers.innerHTML="";
     let k = this.rankList.allPlayers;
     for (var i=0; i<k.length; i++)

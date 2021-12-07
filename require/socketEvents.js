@@ -3,6 +3,7 @@ const game = new serverGameClass;
 
 class socketEvents{
     static io;
+
     static setIo(io){
         this.io = io;
     }
@@ -90,7 +91,7 @@ class socketEvents{
                 socket.to("correctPlayers").emit('chatMessage',data);
             }else{
                 if(game.hasGuessWord(data['message'])){
-                    let points = game.score(data['gameId']);
+                    let points = game.score();
                     console.log("Score given: ", points);
                     console.log("Player:", data['gameId'], " guessed correctly!");
                     game.roundScoresMap.set(data['gameId'], points);
