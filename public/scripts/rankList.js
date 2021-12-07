@@ -36,10 +36,12 @@ class rankList{  //TESTED
 
   sortRankList() {
       this.#players.sort(function (a, b) {
-        return a.getScore - b.getScore;
+        return b.getScore - a.getScore;
         });
+  }
 
-      for (var i=0;i<this.#players.length;i++)
+  changeRankings(){
+    for (var i=0;i<this.#players.length;i++)
       {
         this.#players[i].changePlace(i+1);
         if(i>0 && this.#players[i].getScore == this.#players[i-1].getScore){

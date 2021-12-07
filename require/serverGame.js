@@ -149,11 +149,19 @@ module.exports = class serverGame{
     }
 
     //If player guesses right
-    score(gameId){  
+    score(){  
         let t = new Date();
-        let points = (t-this.roundTime)/(1000*DRAW_TIME) *300 + this.rightGuesses/(this.numPlayers-1) * 200;
+        let timeElapsed = t-this.roundTime;
+        let points = (DRAW_TIME-timeElapsed)/(DRAW_TIME) *300 + this.rightGuesses/(this.numPlayers-1) * 200;
         this.rightGuesses++;
-        return points;
+        return Math.round(points);
+    }
+    
+    drawerScore(){
+        let t = new Date();
+        let timeElapsed = t- this.roundTime;
+        let points =(DRAW_TIME-timeElapsed)/(DRAW_TIME)*100 + this.rightGuesses/(this.numPlayers-1) * 400;
+        return Math.round(points);
     }
 
     processState = (event = null, eventGameId = null)=>{
@@ -326,21 +334,21 @@ module.exports = class serverGame{
             case states['drawEnd']:
                 if(firstEntry){
                     this.removeTimeout();
-                    this.io.emit('server_drawEnd', {"guessWord":this.currentWord, "scoreMap":this.roundScoresMap});
+                    this.roundScoresMap.set(this.currentGameId,this.drawerScore());
+                    this.io.emit('server_drawEnd', {"guessWord":this.currentWord, "scoreMap":Array.from(this.roundScoresMap)});
                     this.rankList.processScoresMap(this.roundScoresMap);
+                    this.currentTimerId = setTimeout(() => {
+                        if(this.currentPlayerIndex == 0){
+                            this.state = states['roundEnd'];
+                        }else{
+                            this.state = states['pickPlayer'];
+                            this.currentPlayerIndex--;
+                        }
+                        this.resetChatRooms();
+                        this.processState();
+                        return;
+                    },DRAW_END_TIME);
                 }
-
-                this.currentTimerId = setTimeout(() => {
-                    if(this.currentPlayerIndex == 0){
-                        this.state = states['roundEnd'];
-                    }else{
-                        this.state = states['pickPlayer'];
-                        this.currentPlayerIndex--;
-                    }
-                    this.resetChatRooms();
-                    this.processState();
-                    return;
-                },DRAW_END_TIME);
                 break;
             case states['roundEnd']:
                 if(firstEntry){

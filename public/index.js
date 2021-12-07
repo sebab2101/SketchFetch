@@ -224,12 +224,13 @@ socket.on("server_drawPhase", function(data){
 });
 
 socket.on("server_drawEnd",function(data){
-    let scoreMap = new Map(Object.entries(data["scoreMap"]));
-    console.log(scoreMap);
+
+    let scoreMap = new Map(data["scoreMap"]);
+    console.log(data["scoreMap"],scoreMap);
     document.getElementById("rankingOverlay").style.display = "initial";
     let t = document.getElementById("rankingTable");
     g.timer.startTimer(DRAW_END_TIME);
-    g.rankList.processScoresMap(scoreMap);
+
     const iterator1 = scoreMap.keys();
     for (var i=0;i<scoreMap.size;i++){
       var row = t.insertRow(i);
@@ -238,6 +239,11 @@ socket.on("server_drawEnd",function(data){
       row.insertCell(1).innerHTML = s;
       row.insertCell(2).innerHTML = scoreMap.get(s);
     }
+
+
+    g.rankList.processScoresMap(scoreMap);
+    g.rankList.changeRankings();
+    g.rankListDisplay.updateRankDisplay();
 });
 
 socket.on("server_roundEnd",function(data){
@@ -245,6 +251,9 @@ socket.on("server_roundEnd",function(data){
     console.log("round", data["roundNumber"], "ended");
     g.rankListDisplay.updateRankDisplay();
     g.chat.addServerMessage("Round " + data["roundNumber"] + " ended!");
+
+    g.rankList.sortRankList();
+    g.rankListDisplay.updateRankDisplay();
 });
 
 socket.on("server_gameEnd",function(){
