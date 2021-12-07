@@ -221,7 +221,9 @@ socket.on("server_drawPhase", function(data){
 });
 
 socket.on("server_drawEnd",function(data){
-    g.rankList.processScoresMap(data["scoreMap"]);
+    let scoreMap = new Map(Object.entries(data["scoreMap"]));
+    console.log(scoreMap);
+    g.rankList.processScoresMap(scoreMap);
 });
 
 socket.on("server_roundEnd",function(data){

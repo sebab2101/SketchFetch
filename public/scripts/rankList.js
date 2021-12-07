@@ -78,8 +78,7 @@ class rankList{  //TESTED
     }
   }
 
-  processScoresMap(scoreMapJSON){
-    let scoreMap = new Map(Object.entries(scoreMapJSON));
+  processScoresMap(scoreMap){
     scoreMap.forEach((value,key)=>{
       this.getPlayer(key).changeScore(value);
     });
