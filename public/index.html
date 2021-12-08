@@ -61,26 +61,30 @@
                 <div class="col-md-6" id="canvas-wrap">
                     <div class ="ratio ratio-4x3 ">
                         <canvas  id="canvasArea"></canvas>
-                        <div id="overlay">
+                        <div id="overlay" style="display: none;">
                           <p style="color:black;">Choose A Word:</p>
                           <button class="btn btn-primary" type="submit" id="word1"></button>
                           <button class="btn btn-primary" type="submit" id="word2"></button>
                           <button class="btn btn-primary" type="submit" id="word3"></button>
                         </div>
-                        <div id="rankingOverlay">
-                          <p>The player was drawing : </p>
-                          <p id="theWord"></p>
-                          <table id="rankingTable" class="table table-hover">
-                            <thead>
+                        <div id="rankingOverlay" style="display: none;">
+                          <p class="whiteOutText">The word was: </p>
+                          <p id="theWord" class="whiteOutText"></p>
+                          <table id="rankingTable" class="table table-hover whiteOutText">
+                            <thead class="table-dark">
                               <tr>
+                                <th scope="col"></th>
                                 <th scope="col">NAME</th>
                                 <th scope="col">SCORE</th>
                               </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="rankingTableEntries">
 
                             </tbody>
                           </table>
+                        </div>
+                        <div id="pickingOverlay" style="display: none;">
+                            <h1 class = "whiteOutText" id="pickingPlayerText"></h1>
                         </div>
                     </div>
                 </div>

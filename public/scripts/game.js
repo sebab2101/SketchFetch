@@ -14,8 +14,7 @@ class game{
       this.rankList = new rankList(response["rankList"]);
       this.rankListDisplay = new rankListDisplay(this.rankList);
       this.guessProgress = new guessProgress(this.timer);
-      this.player = new player(userName,response['gameId']);
-      this.rankList.addPlayer(this.player);
+      this.player = this.rankList.getPlayer(response['gameId']);
       this.chat = new chatArea(response['gameId'],this.rankList);
       this.chat.addServerMessage("You have joined.");
       this.rankListDisplay.updateRankDisplay()

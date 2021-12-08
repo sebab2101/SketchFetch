@@ -4,7 +4,7 @@ class rankList{  //TESTED
   constructor(oldPlayers = []){
     for (var i=0;i<oldPlayers.length;i++){
       let pl= oldPlayers[i];
-      let p = new player(pl[0],pl[1],pl[2],pl[3],pl[4]);
+      let p = new player(pl[0],pl[1],pl[2],pl[3],pl[4],pl[5]);
       this.#players.push(p);
     }
 
@@ -41,16 +41,20 @@ class rankList{  //TESTED
   }
 
   changeRankings(){
-    for (var i=0;i<this.#players.length;i++)
+    let players = [...this.#players];
+    players.sort(function (a, b) {
+      return b.getScore - a.getScore;
+    });
+    for (var i=0;i<players.length;i++)
       {
         if(i>0){
-          if(this.#players[i].getScore == this.#players[i-1].getScore){
-            this.#players[i].changePlace(this.#players[i-1].getPlace);
+          if(players[i].getScore == players[i-1].getScore){
+            players[i].changePlace(players[i-1].getPlace);
           }else{   
-            this.#players[i].changePlace(this.#players[i-1].getPlace+1);
+            players[i].changePlace(players[i-1].getPlace+1);
           }
        }else{
-         this.#players[i].changePlace(1);
+         players[i].changePlace(1);
        }
 
       }
@@ -87,7 +91,10 @@ class rankList{  //TESTED
 
   processScoresMap(scoreMap){
     scoreMap.forEach((value,key)=>{
-      this.getPlayer(key).changeScore(value);
+      let player = this.getPlayer(key);
+      if(player!=null){   
+        player.changeScore(value);
+      }
     });
   }
   

@@ -11,14 +11,13 @@ class socketEvents{
     static newPlayer = (socket)=>{
         socket.on('newPlayer',(userName,callback) =>{
             let gameId = game.generateGameId();
+            game.addClient(socket.id, userName, gameId);
             socket.to("activePlayers").emit('newPlayer',{'userName':userName,'gameId':gameId});
             socket.join("activePlayers");
             callback({
                 "gameId": gameId,
                 "rankList":game.getRankList()
             });
-    
-            game.addClient(socket.id, userName, gameId);
             game.processState("newPlayer",gameId);
         });
     };

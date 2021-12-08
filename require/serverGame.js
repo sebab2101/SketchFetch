@@ -29,7 +29,7 @@ const PICK_TIME = 10000;
 //time for drawing
 const DRAW_TIME = 35000;
 //time for displaying results after each draw
-const DRAW_END_TIME = 5000;
+const DRAW_END_TIME = 10000;
 const TOTAL_ROUNDS = 3;
 //number of choices drawer gets to pick from
 const NUM_RANDWORDS = 3;
@@ -68,8 +68,9 @@ module.exports = class serverGame{
 
     addClient(socketId, userName,gameId){
 		console.log('A player joined. UserName: ', userName, "; Id: ", gameId);
-        let p = new playerClass(userName,gameId );
+        let p = new playerClass(userName,gameId);
     	this.rankList.addPlayer(p);
+        this.rankList.changeRankings();
 		this.clientMap.set(socketId, gameId);
         this.clientRevMap.set(gameId, socketId);
     }
@@ -77,6 +78,7 @@ module.exports = class serverGame{
     removeClient(socketId,gameId){
         this.clientMap.delete(socketId);
         this.rankList.removePlayer(gameId);
+        this.rankList.changeRankings();
         this.clientRevMap.delete(gameId);
 		console.log('A player left. ', gameId);
     }
@@ -340,6 +342,7 @@ module.exports = class serverGame{
                     this.roundScoresMap.set(this.currentGameId,this.drawerScore());
                     this.io.emit('server_drawEnd', {"guessWord":this.currentWord, "scoreMap":Array.from(this.roundScoresMap)});
                     this.rankList.processScoresMap(this.roundScoresMap);
+                    this.rankList.changeRankings();
                     this.currentTimerId = setTimeout(() => {
                         if(this.currentPlayerIndex == 0){
                             this.state = states['roundEnd'];
@@ -356,6 +359,7 @@ module.exports = class serverGame{
             case states['roundEnd']:
                 if(firstEntry){
                     this.removeTimeout();
+                    this.rankList.sortRankList();
                     this.io.emit('server_roundEnd', {"roundCount":this.roundCount});
                     this.roundCount++;
                 }
