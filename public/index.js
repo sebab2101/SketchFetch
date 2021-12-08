@@ -67,6 +67,7 @@ socket.on('newPlayer',function (data){
     console.log('New player! (Client): ', data);
     p = new player(data['userName'],data['gameId']);
     g.rankList.addPlayer(p);
+    g.rankList.changeRankings();
     g.rankListDisplay.updateRankDisplay();
     g.chat.addServerMessage(data['userName']+" has joined.");
 });
@@ -75,6 +76,7 @@ socket.on('removePlayer',function (gameId){
     let uName = g.rankList.getUsername(gameId);
     console.log('A player Left! (Client): ', uName, gameId);
     g.rankList.removePlayer(gameId);
+    g.rankList.changeRankings();
     g.rankListDisplay.updateRankDisplay();
     g.chat.addServerMessage(uName+" has left.");
 });
