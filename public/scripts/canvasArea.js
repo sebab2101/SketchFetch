@@ -16,6 +16,7 @@ class canvasArea{
     drawSize= 2;
     drawSizeBuffer = 2;
     static eraserSize = 14;
+    drawStat= true;
     dot_flag = false;
     //Captures is player is drawing or not.
     flag = false;
@@ -72,8 +73,9 @@ class canvasArea{
             let pageX = e.pageX-this.canvasOffsetLeft;
             let pageY = e.pageY-this.canvasOffsetTop;
             this.findxy('move', pageX, pageY,this.canvasWidth)
-            if(this.flag)
+            if(this.flag && this.drawStat)
                 socket.emit('drawCanvas',{"move": 'move', "x": pageX, "y": pageY, "orgWidth": this.canvasWidth});
+            
         }, { signal: this.controller.signal });
         this.canvas.addEventListener("mousedown", e  => {
             let pageX = e.pageX-this.canvasOffsetLeft;
@@ -236,12 +238,12 @@ class canvasArea{
     }
 
     findxy(move, pageX, pageY,orgWidth) {
+
         if (move == 'down') {
             this.prevX = this.currX;
             this.prevY = this.currY;
             this.currX = pageX * (this.canvasWidth/orgWidth);
             this.currY = pageY * (this.canvasWidth/orgWidth);
-
             this.flag = true;
 
             this.dot_flag = true;
@@ -259,11 +261,24 @@ class canvasArea{
             this.flag = false;
         }
         if (move == 'move') {
+            let tempX = pageX * (this.canvasWidth/orgWidth);
+            let tempY = pageY * (this.canvasWidth/orgWidth);
+            console.log(tempX,this.prevX,tempY,this.prevY)
+            if(Math.abs(tempX-this.prevX) <= this.drawSize/2){
+                if( Math.abs(tempY-this.prevY) <= this.drawSize/2){
+                    console.log("IGNORING");
+                    this.drawStat = false;
+                    return;
+                }
+            }
+
+            this.drawStat = true;
+
             if (this.flag) {
                 this.prevX = this.currX;
                 this.prevY = this.currY;
-                this.currX = pageX * (this.canvasWidth/orgWidth);
-                this.currY = pageY * (this.canvasWidth/orgWidth);
+                this.currX = tempX;
+                this.currY = tempY;
                 this.draw();
             }
         }
@@ -288,7 +303,6 @@ class canvasArea{
         img.src = url;
 
         img.onload = ()=>{
-            console.log(img);
             this.ctx.drawImage(img,0,0,this.canvasWidth,this.canvasHeight,);
             URL.revokeObjectURL(url);
         }

@@ -10,7 +10,7 @@ const PICK_TIME = 10000 / 1000;
 //time for drawing
 const DRAW_TIME = 35000 / 1000;
 //time to show results after drawing;
-const DRAW_END_TIME = 5000 / 1000;
+const DRAW_END_TIME = 10000 / 1000;
 //total rounds
 const TOTAL_ROUNDS = 3;
 
@@ -20,6 +20,7 @@ var g;
 var splash = new splashscreen();
 document.getElementById("overlay").style.display = "none";
 document.getElementById("rankingOverlay").style.display = "none";
+document.getElementById("pickingOverlay").style.display = "none";
 function addListeners(){
 
     splash.loginForm.addEventListener('submit', (e)=>{
@@ -154,16 +155,21 @@ socket.on("server_roundBegin",function(num){
 });
 
 socket.on("server_pickPlayer",function(id){
+    let userName = g.rankList.getUsername(id);
+    document.getElementById("rankingOverlay").style.display = "none";
+    document.getElementById("pickingOverlay").style.display = "initial";
+    document.getElementById("pickingPlayerText").innerText ="Player " + userName + " is choosing a word!";
+
     g.canvas.makeUnactive();
     g.rankList.resetAllStatus();
     g.timer.startTimer(PICK_TIME);
-    g.chat.addServerMessage("Player " + g.rankList.getUsername(id) + " is choosing a word!");
+    g.chat.addServerMessage("Player " + userName + " is choosing a word!");
 });
 
 socket.on("server_pickWord",(data,callback) =>{
     console.log(data);
-    document.getElementById("rankingOverlay").style.display = "none";
     document.getElementById("overlay").style.display = "initial";
+    document.getElementById("pickingOverlay").style.display = "none";
     var choice = "";
     document.getElementById('word1').innerText = data["wordChoices"][0];
     document.getElementById('word2').innerText = data["wordChoices"][1];
@@ -207,6 +213,7 @@ socket.on("server_drawPhase", function(data){
     let gameId = data["drawer"], wordLength = data["wordLength"];
     let player = g.rankList.getPlayer(gameId);
     let userName = player.getName;
+    document.getElementById("pickingOverlay").style.display = "none";
     document.getElementById("rankingOverlay").style.display = "none";
     let t1 = document.getElementById("rankingTable");
     for(var i = t1.rows.length - 1; i > 0; i--)
@@ -238,14 +245,19 @@ socket.on("server_drawEnd",function(data){
     let scoreMap = new Map(data["scoreMap"]);
     console.log(data["scoreMap"],scoreMap);
     document.getElementById("rankingOverlay").style.display = "initial";
-    let t = document.getElementById("rankingTable");
+    let t = document.getElementById("rankingTable").getElementsByTagName('tbody')[0];
     g.timer.startTimer(DRAW_END_TIME);
     const iterator1 = scoreMap.keys();
     for (var i=0;i<scoreMap.size;i++){
-      var row = t.insertRow(i+1);
+      var row = t.insertRow();
       let s = iterator1.next().value;
-      row.insertCell(0).innerHTML = g.rankList.getUsername(s);
-      row.insertCell(1).innerHTML = scoreMap.get(s);
+      if(i == scoreMap.size-1){
+        row.insertCell().innerHTML = "&#9999;&#65039;";
+      }else{
+        row.insertCell().innerText = i+1;
+      }
+      row.insertCell().innerText = g.rankList.getUsername(s);
+      row.insertCell().innerText = "+"+scoreMap.get(s);
     }
 
 
@@ -268,5 +280,3 @@ socket.on("server_gameEnd",function(){
     g.chat.addServerMessage("Game Over! Thanks for playing!");
 });
 }
-//startTimer = (time)=>g.timer.startTimer(time);
-//resetTimer = (time)=>g.timer.resetTimer(time);
