@@ -231,6 +231,8 @@ socket.on("server_drawPhase", function(data){
 });
 
 socket.on("server_drawEnd",function(data){
+    g.canvas.eraseImmediate();
+    g.canvas.makeUnactive();
     document.getElementById("theWord").innerHTML = "";
     document.getElementById("theWord").innerHTML += data["guessWord"];
     let scoreMap = new Map(data["scoreMap"]);
