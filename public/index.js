@@ -206,6 +206,11 @@ socket.on("server_drawPhase", function(data){
     let player = g.rankList.getPlayer(gameId);
     let userName = player.getName;
     document.getElementById("rankingOverlay").style.display = "none";
+    let t1 = document.getElementById("rankingTable");
+    for(var i = t1.rows.length - 1; i > 0; i--)
+    {
+      t1.deleteRow(i);
+    }
     console.log("Receiving draw data from", userName);
     g.timer.startTimer(DRAW_TIME);
     g.chat.addServerMessage(userName + " is drawing.");
@@ -224,20 +229,19 @@ socket.on("server_drawPhase", function(data){
 });
 
 socket.on("server_drawEnd",function(data){
-
+    document.getElementById("theWord").innerHTML = "";
+    document.getElementById("theWord").innerHTML += data["guessWord"];
     let scoreMap = new Map(data["scoreMap"]);
     console.log(data["scoreMap"],scoreMap);
     document.getElementById("rankingOverlay").style.display = "initial";
     let t = document.getElementById("rankingTable");
     g.timer.startTimer(DRAW_END_TIME);
-
     const iterator1 = scoreMap.keys();
     for (var i=0;i<scoreMap.size;i++){
-      var row = t.insertRow(i);
-      row.insertCell(0).innerHTML = i;
+      var row = t.insertRow(i+1);
       let s = iterator1.next().value;
-      row.insertCell(1).innerHTML = s;
-      row.insertCell(2).innerHTML = scoreMap.get(s);
+      row.insertCell(0).innerHTML = g.rankList.getUsername(s);
+      row.insertCell(1).innerHTML = scoreMap.get(s);
     }
 
 

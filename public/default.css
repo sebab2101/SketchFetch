@@ -25,6 +25,16 @@ transition: 0.2s all;
     text-transform: uppercase;;
 }
 
+#rankingOverlay {
+  text-align: center;
+  font-family: monospace;
+}
+
+#theWord {
+  font-weight: bold;
+  font-size: 3rem;
+}
+
 
 
   #container canvas, #overlay:active{
