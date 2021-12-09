@@ -1,4 +1,4 @@
-class chatArea{
+export class chatArea{
     chatBox;
     chatMessages;
     chatForm;

@@ -1,4 +1,4 @@
-const {createCanvas,loadImage} = require('canvas')
+const {createCanvas} = require('canvas')
 const CANVAS_WIDTH = 1000;
 
 module.exports = class canvasArea{

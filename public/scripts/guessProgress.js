@@ -1,4 +1,4 @@
-class guessProgress{
+export class guessProgress{
     //Not the exact word, just a placeholder
     guessWord;
     guessWordLength;

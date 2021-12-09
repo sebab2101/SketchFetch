@@ -1,6 +1,6 @@
-const wordListClass = require('./wordList.js');
-const playerClass = require('../public/scripts/player.js');
-const rankListClass = require('../public/scripts/rankList.js');
+import {wordList as wordListClass} from './wordList.js';
+import {player as playerClass} from '../public/scripts/player.js';
+import {rankList as rankListClass} from '../public/scripts/rankList.js';
 let canvasAvailable;
 let canvasServerClass;
 try{
@@ -34,7 +34,7 @@ const TOTAL_ROUNDS = 3;
 //number of choices drawer gets to pick from
 const NUM_RANDWORDS = 3;
 
-module.exports = class serverGame{
+export class serverGame{
     rankList = new rankListClass;
     //socket id to game id map
     clientMap = new Map;
@@ -43,13 +43,23 @@ module.exports = class serverGame{
     //game id to current round scores map
     roundScoresMap = new Map;
     wordList = new wordListClass();
+    //socket-io object
     io;
+    //stores round number
     roundCount = 1;
+    //players in the current drawPhase
+    playersThisDraw;
+    //Drawer's index in the rankList
     currentPlayerIndex;
+    //Drawer's gameId
     currentGameId;
+    //Drawer's socketId
     currentSocketId;
+    //Drawer's socket
     currentSocket;
+    //Timer associated with current game state
     currentTimerId;
+    //Start time for a drawPhase
     roundTime;
     rightGuesses=0;
     //initial state
@@ -150,6 +160,7 @@ module.exports = class serverGame{
     //initialize scoring
     initScoring(){
         this.roundTime = new Date();
+        this.playersThisDraw = this.numPlayers;
         this.rightGuesses = 0;
     }
 
@@ -157,7 +168,7 @@ module.exports = class serverGame{
     score(){  
         let t = new Date();
         let timeElapsed = t-this.roundTime;
-        let points = (DRAW_TIME-timeElapsed)/(DRAW_TIME) *300 + this.rightGuesses/(this.numPlayers-1) * 200;
+        let points = (DRAW_TIME-timeElapsed)/(DRAW_TIME) *300 + (this.playersThisDraw-1 -this.rightGuesses)/(this.playersThisDraw-1) * 200;
         this.rightGuesses++;
         return Math.round(points);
     }
@@ -165,7 +176,7 @@ module.exports = class serverGame{
     drawerScore(){
         let t = new Date();
         let timeElapsed = t- this.roundTime;
-        let points =(DRAW_TIME-timeElapsed)/(DRAW_TIME)*100 + this.rightGuesses/(this.numPlayers-1) * 400;
+        let points =(DRAW_TIME-timeElapsed)/(DRAW_TIME)*100 + this.rightGuesses/(this.playersThisDraw-1) * 400;
         return Math.round(points);
     }
 

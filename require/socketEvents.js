@@ -1,7 +1,7 @@
-const serverGameClass = require('./serverGame.js');
-const game = new serverGameClass;
+import {serverGame as serverGameClass} from './serverGame.js';
+export const game = new serverGameClass;
 
-class socketEvents{
+export class socketEvents{
     static io;
 
     static setIo(io){
@@ -112,4 +112,3 @@ class socketEvents{
         });
     };    
 }
-module.exports  =  {socketEvents, game};

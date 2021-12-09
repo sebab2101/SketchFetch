@@ -1,5 +1,5 @@
 
-class canvasArea{
+export class canvasArea{
     canvas;
     canvasWidth=0;
     canvasHeight=0;
