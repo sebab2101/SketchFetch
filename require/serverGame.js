@@ -1,8 +1,9 @@
 import {wordList as wordListClass} from './wordList.js';
 import {player as playerClass} from '../public/scripts/player.js';
 import {rankList as rankListClass} from '../public/scripts/rankList.js';
-let canvasAvailable;
-let canvasServerClass;
+import * as constants from '../public/constants.js' 
+
+let canvasAvailable,canvasServerClass;
 try{
     canvasServerClass = require('./canvasServer.js');
     canvasAvailable = true;
@@ -19,20 +20,7 @@ function createEnum(values) {
 }
 
 const states = createEnum(['idle', 'gameStart', 'roundBegin', 'pickPlayer', 'drawPhase','drawEnd', 'roundEnd', 'gameEnd']);
-const MIN_PLAYERS= 2;
-//time before game starts with sufficient players
-const START_TIME = 10000;
-//time before game restarts after game ends
-const END_TIME = 10000;
-//time for selecting a word
-const PICK_TIME = 10000;
-//time for drawing
-const DRAW_TIME = 35000;
-//time for displaying results after each draw
-const DRAW_END_TIME = 10000;
-const TOTAL_ROUNDS = 3;
-//number of choices drawer gets to pick from
-const NUM_RANDWORDS = 3;
+
 
 export class serverGame{
     rankList = new rankListClass;
@@ -168,7 +156,7 @@ export class serverGame{
     score(){  
         let t = new Date();
         let timeElapsed = t-this.roundTime;
-        let points = (DRAW_TIME-timeElapsed)/(DRAW_TIME) *300 + (this.playersThisDraw-1 -this.rightGuesses)/(this.playersThisDraw-1) * 200;
+        let points = (constants.DRAW_TIME-timeElapsed)/(constants.DRAW_TIME) *300 + (this.playersThisDraw-1 -this.rightGuesses)/(this.playersThisDraw-1) * 200;
         this.rightGuesses++;
         return Math.round(points);
     }
@@ -176,7 +164,7 @@ export class serverGame{
     drawerScore(){
         let t = new Date();
         let timeElapsed = t- this.roundTime;
-        let points =(DRAW_TIME-timeElapsed)/(DRAW_TIME)*100 + this.rightGuesses/(this.playersThisDraw-1) * 400;
+        let points =(constants.DRAW_TIME-timeElapsed)/(constants.DRAW_TIME)*100 + this.rightGuesses/(this.playersThisDraw-1) * 400;
         return Math.round(points);
     }
 
@@ -194,9 +182,8 @@ export class serverGame{
                     this.removeTimeout();
                     this.io.emit('server_idle');
                 }
-
                 if(event == "newPlayer"){
-                    if(this.numPlayers >= MIN_PLAYERS){
+                    if(this.numPlayers >= constants.MIN_PLAYERS){
                         this.io.emit('server_idle');
                         this.state = states['gameStart'];
                         this.processState();
@@ -213,10 +200,10 @@ export class serverGame{
                         this.state = states['roundBegin'];
                         this.roundCount = 1;
                         this.processState();
-                    }, START_TIME);
+                    }, constants.START_TIME);
                 }
 
-                if(this.numPlayers < MIN_PLAYERS){
+                if(this.numPlayers < constants.MIN_PLAYERS){
                     this.state = states['idle'];
                     this.processState();
                     return;
@@ -247,7 +234,7 @@ export class serverGame{
                     this.currentSocket = this.getSocket(this.currentSocketId);
                     this.io.emit('server_pickPlayer', this.currentGameId);
                     console.log("Drawer GameId:", this.currentGameId, ",SocketId:",this.currentSocketId);
-                    let wordChoices = this.wordList.randomWordPick(NUM_RANDWORDS);
+                    let wordChoices = this.wordList.randomWordPick(constants.NUM_RANDWORDS);
                     this.currentSocket.emit("server_pickWord",{"wordChoices":wordChoices},(response)=>{
                         if(wordChoices.includes(response)){
                             clearTimeout(this.currentTimerId);
@@ -272,7 +259,7 @@ export class serverGame{
                         this.state = states['pickPlayer'];
                         this.processState();
                         return;
-                    }, PICK_TIME);
+                    }, constants.PICK_TIME);
                 }
 
                 if(event == "disconnectPlayer"){
@@ -313,7 +300,7 @@ export class serverGame{
                         this.state = states['drawEnd'];
                         this.processState();
                         return;
-                    }, DRAW_TIME);
+                    }, constants.DRAW_TIME);
                 }
 
                 if(event == "disconnectPlayer"){
@@ -364,7 +351,7 @@ export class serverGame{
                         this.resetChatRooms();
                         this.processState();
                         return;
-                    },DRAW_END_TIME);
+                    },constants.DRAW_END_TIME);
                 }
                 break;
             case states['roundEnd']:
@@ -375,7 +362,7 @@ export class serverGame{
                     this.roundCount++;
                 }
 
-                if(this.numPlayers < MIN_PLAYERS || this.roundCount > TOTAL_ROUNDS){
+                if(this.numPlayers < constants.MIN_PLAYERS || this.roundCount > constants.TOTAL_ROUNDS){
                     this.state = states['gameEnd'];
                 }else{
                     this.state = states['roundBegin'];
@@ -392,7 +379,7 @@ export class serverGame{
                         this.state = states['gameStart'];
                         this.processState();
                         return;
-                    }, END_TIME)
+                    }, constants.END_TIME)
                 }
 
                 if(this.numPlayers==0){
