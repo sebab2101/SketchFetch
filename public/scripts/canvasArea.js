@@ -22,14 +22,16 @@ export class canvasArea{
     flag = false;
     backgroundColor = "white";
     active = false;
+    socket;
     controller = new AbortController();
-    constructor(active){
+    constructor(active,socket){
         this.drawBox = document.querySelector("#drawBox");
         this.drawSizeSelector = this.drawBox.querySelector("#brushSizeRange");
         this.canvas = document.querySelector("#canvasArea");
         this.ctx = this.canvas.getContext("2d");
         this.drawBox.style.display = "none";
         this.active = active;
+        this.socket = socket;
         this.dimensionSet();
         if(this.active){
             this.addMouseListeners();
@@ -74,27 +76,27 @@ export class canvasArea{
             let pageY = e.pageY-this.canvasOffsetTop;
             this.findxy('move', pageX, pageY,this.canvasWidth)
             if(this.flag && this.drawStat)
-                socket.emit('drawCanvas',{"move": 'move', "x": pageX, "y": pageY, "orgWidth": this.canvasWidth});
+                this.socket.emit('drawCanvas',{"move": 'move', "x": pageX, "y": pageY, "orgWidth": this.canvasWidth});
             
         }, { signal: this.controller.signal });
         this.canvas.addEventListener("mousedown", e  => {
             let pageX = e.pageX-this.canvasOffsetLeft;
             let pageY = e.pageY-this.canvasOffsetTop;
             this.findxy('down', pageX, pageY,this.canvasWidth)
-            socket.emit('drawCanvas',{"move": 'down', "x": pageX, "y": pageY, "orgWidth": this.canvasWidth});
+            this.socket.emit('drawCanvas',{"move": 'down', "x": pageX, "y": pageY, "orgWidth": this.canvasWidth});
         }, { signal: this.controller.signal });
         this.canvas.addEventListener("mouseup", e =>{
             let pageX = e.pageX-this.canvasOffsetLeft;
             let pageY = e.pageY-this.canvasOffsetTop;
             this.findxy('up', pageX, pageY,this.canvasWidth)
-            socket.emit('drawCanvas',{"move": 'up', "x": pageX, "y": pageY, "orgWidth": this.canvasWidth});
+            this.socket.emit('drawCanvas',{"move": 'up', "x": pageX, "y": pageY, "orgWidth": this.canvasWidth});
         }, { signal: this.controller.signal });
         this.canvas.addEventListener("mouseout", e =>{
             let pageX = e.pageX-this.canvasOffsetLeft;
             let pageY = e.pageY-this.canvasOffsetTop;
             this.findxy('out', pageX, pageY,this.canvasWidth)
             if(this.flag)
-                socket.emit('drawCanvas',{"move": 'out', "x": pageX, "y": pageY, "orgWidth": this.canvasWidth});
+                this.socket.emit('drawCanvas',{"move": 'out', "x": pageX, "y": pageY, "orgWidth": this.canvasWidth});
         }, { signal: this.controller.signal });
 
 
@@ -131,7 +133,7 @@ export class canvasArea{
         this.drawSizeSelector.addEventListener("mouseup",()=>{
             this.drawSize = this.drawSizeSelector.value;
             this.drawSizeBuffer = this.drawSize;
-            socket.emit("brushSizeCanvas",{"brushSize":this.drawSize});
+            this.socket.emit("brushSizeCanvas",{"brushSize":this.drawSize});
         },{signal:this.controller.signal});
     }
 
@@ -174,7 +176,7 @@ export class canvasArea{
         if (this.drawColor == this.backgroundColor) this.drawSize = canvasArea.eraserSize;
         else this.drawSize = this.drawSizeBuffer;
         if(this.active){
-            socket.emit('changeColorCanvas',{"color":obj});
+            this.socket.emit('changeColorCanvas',{"color":obj});
         }
     }
 
@@ -207,7 +209,7 @@ export class canvasArea{
         this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
 
         if(this.active){
-            socket.emit('changeBgColorCanvas',{"backgroundColor":obj});
+            this.socket.emit('changeBgColorCanvas',{"backgroundColor":obj});
         }
     }
 
@@ -225,7 +227,7 @@ export class canvasArea{
         var m = confirm("Want to clear the board?");
         if (m) {
             this.eraseImmediate();
-            socket.emit('clearCanvas');
+            this.socket.emit('clearCanvas');
         }
     }
 

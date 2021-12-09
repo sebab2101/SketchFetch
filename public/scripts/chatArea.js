@@ -6,7 +6,7 @@ export class chatArea{
     gameId;
     player;
     rankList;
-    constructor(myId,myList){
+    constructor(myId,myList,socket){
         this.chatBox = document.querySelector("#chatBox");
         this.chatMessages = chatBox.querySelector("#chatMessages");
         this.chatMessageArea = chatBox.querySelector("#chatMessageArea");
@@ -14,6 +14,7 @@ export class chatArea{
         this.chatForm = chatBox.querySelector("#chatForm");
         this.gameId = myId;
         this.rankList = myList;
+        this.socket = socket;
         this.player = this.rankList.getPlayer(this.gameId);
         this.addListeners();
     }
@@ -52,7 +53,7 @@ export class chatArea{
               }else{
                 this.addMessage(this.player.getName,this.chatInput.value);
               }
-              socket.emit('chatMessage', {"gameId":this.gameId, "message":this.chatInput.value});
+              this.socket.emit('chatMessage', {"gameId":this.gameId, "message":this.chatInput.value});
               this.chatInput.value = '';
             }
         });

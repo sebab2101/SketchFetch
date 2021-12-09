@@ -18,14 +18,14 @@ export class game{
   constructor(userName,socket) {
       socket.emit("newPlayer",userName,(response)=>{
       console.log(response);
-      this.canvas = new canvasArea(false);
+      this.canvas = new canvasArea(false,socket);
       this.timer = new timer();
       console.log(this.timer);
       this.rankList = new rankList(response["rankList"]);
       this.rankListDisplay = new rankListDisplay(this.rankList);
       this.guessProgress = new guessProgress(this.timer);
       this.player = this.rankList.getPlayer(response['gameId']);
-      this.chat = new chatArea(response['gameId'],this.rankList);
+      this.chat = new chatArea(response['gameId'],this.rankList,socket);
       this.chat.addServerMessage("You have joined.");
       this.rankListDisplay.updateRankDisplay()
       //window redraw adjustments
@@ -161,7 +161,7 @@ export class game{
     }, constants.PICK_TIME*0.9); //automatically chooses after 90% of pick-time elapses
 
 
-    document.getElementById('word1').addEventListener('click', function() {
+    document.getElementById('word1').addEventListener('click', ()=> {
         choice = data["wordChoices"][0];
         document.getElementById("overlay").style.display = "none";
         callback(choice);
@@ -169,7 +169,7 @@ export class game{
         this.guessProgress.updateGuessWord(choice);
     });
 
-    document.getElementById('word2').addEventListener('click', function() {
+    document.getElementById('word2').addEventListener('click', ()=> {
         choice = data["wordChoices"][1];
         document.getElementById("overlay").style.display = "none";
         callback(choice);
@@ -177,7 +177,7 @@ export class game{
         this.guessProgress.updateGuessWord(choice);
     });
 
-    document.getElementById('word3').addEventListener('click', function() {
+    document.getElementById('word3').addEventListener('click', ()=> {
         choice = data["wordChoices"][2];
         document.getElementById("overlay").style.display = "none";
         callback(choice);
