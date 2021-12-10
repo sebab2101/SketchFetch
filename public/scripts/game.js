@@ -184,6 +184,8 @@ export class game{
         clearTimeout(timeId);
         this.guessProgress.updateGuessWord(choice);
     });
+
+    this.canvas.eraseImmediate();
 }
 
   server_drawPhase=(data)=>{
@@ -199,7 +201,7 @@ export class game{
     }
     console.log("Receiving draw data from", userName);
     this.timer.startTimer(constants.DRAW_TIME);
-    this.chat.addServerMessage(userName + " is drawinthis.");
+    this.chat.addServerMessage(userName + " is drawing.");
     player.rightGuessed();
     player.makeDrawer();
     if(this.player.getPlayerId == gameId)
@@ -234,31 +236,29 @@ export class game{
     row.insertCell().innerText = "+"+scoreMap.get(s);
     }
 
-
+    this.guessProgress.clearGuessWord();
     this.rankList.processScoresMap(scoreMap);
     this.rankList.changeRankings();
     this.rankListDisplay.updateRankDisplay();
 }
 
   server_roundEnd=(data)=>{
-    console.log("round", data["roundNumber"], "ended");
+    console.log("round", data["roundCount"], "ended");
     this.rankListDisplay.updateRankDisplay();
-    this.chat.addServerMessage("Round " + data["roundNumber"] + " ended!");
-
+    this.chat.addServerMessage("Round " + data["roundCount"] + " ended!");
     this.rankList.sortRankList();
     this.rankListDisplay.updateRankDisplay();
 }
 
   server_gameEnd=()=>{
     this.resetGame();
+    this.guessProgress.clearGuessWord();
     this.chat.addServerMessage("Game Over! Thanks for playing!");
   }
-
 
   resetGame(){
     this.canvas.eraseImmediate();
     this.timer.resetTimer();
     this.rankList.resetRankList();
   }
-
 }

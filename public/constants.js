@@ -1,5 +1,5 @@
 //minimum number of players to continue running the game
-export const MIN_PLAYERS= 2;
+export const MIN_PLAYERS= 1;
 //time before game starts with sufficient players (ms)
 export const START_TIME = 10000;
 //time before game restarts after game ends (ms)
