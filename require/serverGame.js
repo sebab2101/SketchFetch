@@ -117,8 +117,7 @@ export class serverGame{
         Array.from(this.clientMap.keys()).forEach(socketId => {
             let socket = this.getSocket(socketId);
             if(socket != undefined){
-
-            socket.leave("correctPlayers");
+                socket.leave("correctPlayers");
             }
         });
     }
@@ -195,7 +194,7 @@ export class serverGame{
                 if(firstEntry){
                     this.removeTimeout();
                     this.io.emit('server_gameStart');
-
+                    this.rankList.resetRankList();
                     this.currentTimerId = setTimeout(() => {
                         this.state = states['roundBegin'];
                         this.roundCount = 1;
@@ -229,6 +228,11 @@ export class serverGame{
                         this.canvas.eraseImmediate();
                     }
                     this.rankList.resetAllStatus();
+                    if(this.rankList.atIndex(this.currentPlayerIndex) == null){
+                        this.state = states['idle'];
+                        this.processState();
+                        return;
+                    }
                     this.currentGameId = this.rankList.atIndex(this.currentPlayerIndex).getPlayerId;
                     this.currentSocketId = this.getSocketId(this.currentGameId);
                     this.currentSocket = this.getSocket(this.currentSocketId);
@@ -337,6 +341,7 @@ export class serverGame{
             case states['drawEnd']:
                 if(firstEntry){
                     this.removeTimeout();
+                    this.resetChatRooms();
                     this.roundScoresMap.set(this.currentGameId,this.drawerScore());
                     this.io.emit('server_drawEnd', {"guessWord":this.currentWord, "scoreMap":Array.from(this.roundScoresMap)});
                     this.rankList.processScoresMap(this.roundScoresMap);
@@ -348,7 +353,6 @@ export class serverGame{
                             this.state = states['pickPlayer'];
                             this.currentPlayerIndex--;
                         }
-                        this.resetChatRooms();
                         this.processState();
                         return;
                     },constants.DRAW_END_TIME);

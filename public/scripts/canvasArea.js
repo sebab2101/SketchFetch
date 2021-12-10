@@ -302,10 +302,9 @@ export class canvasArea{
         var url = URL.createObjectURL(blob);
         var img = new Image;
         img.src = url;
-
+        console.log(url);
         img.onload = ()=>{
-            this.ctx.drawImage(img,0,0,this.canvasWidth,this.canvasHeight,);
-            URL.revokeObjectURL(url);
+            this.ctx.drawImage(img,0,0,this.canvasWidth,this.canvasHeight);
         }
     }
 }
