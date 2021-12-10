@@ -7,7 +7,7 @@ export const END_TIME = 10000;
 //time for selecting a word (ms)
 export const PICK_TIME = 10000;
 //time for drawing (ms)
-export const DRAW_TIME = 35000;
+export const DRAW_TIME = 40000;
 //time for displaying results after each draw (ms)
 export const DRAW_END_TIME = 10000;
 //total number of rounds before everything resets
