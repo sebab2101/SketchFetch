@@ -11,6 +11,6 @@ export const DRAW_TIME = 40000;
 //time for displaying results after each draw (ms)
 export const DRAW_END_TIME = 10000;
 //total number of rounds before everything resets
-export const TOTAL_ROUNDS = 3;
+export const TOTAL_ROUNDS = 0;
 //number of choices drawer gets to pick from
 export const NUM_RANDWORDS = 3;

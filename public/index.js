@@ -47,5 +47,5 @@ function addSocketEvents(){
     socket.on("server_drawPhase", g.server_drawPhase);
     socket.on("server_drawEnd",g.server_drawEnd);
     socket.on("server_roundEnd",g.server_roundEnd);
-    socket.on("server_gameEnd",g.addSocketEventsserver_gameEnd);
+    socket.on("server_gameEnd",g.server_gameEnd);
 }

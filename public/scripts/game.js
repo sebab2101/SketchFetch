@@ -123,6 +123,7 @@ export class game{
   server_gameStart=()=>{
     this.timer.startTimer(constants.START_TIME);
     this.chat.addServerMessage("Starting game soon..");
+    document.getElementById("theWordWas").style.display = "initial";
 }
 
   server_roundBegin=(num)=>{
@@ -212,10 +213,9 @@ export class game{
 
     this.rankListDisplay.updateRankDisplay();
 }
-  
+
   server_drawEnd=(data)=>{
-    document.getElementById("theWord").innerHTML = "";
-    document.getElementById("theWord").innerHTML += data["guessWord"];
+    document.getElementById("theWord").innerText = data["guessWord"];
     let scoreMap = new Map(data["scoreMap"]);
     console.log(data["scoreMap"],scoreMap);
     document.getElementById("rankingOverlay").style.display = "initial";
@@ -250,6 +250,24 @@ export class game{
 }
 
   server_gameEnd=()=>{
+    var ranking = this.rankList.allPlayers;
+    document.getElementById("rankingOverlay").style.display = "initial";
+    document.getElementById("theWordWas").style.display = "none";
+    document.getElementById("theWord").innerText = "Final Ranking";
+    let t1 = document.getElementById("rankingTable");
+    for(var i = t1.rows.length - 1; i > 0; i--)
+    {
+    t1.deleteRow(i);
+    }
+
+    let t = document.getElementById("rankingTable").getElementsByTagName('tbody')[0];
+    for (var i=0; i<ranking.length; i++){
+      var row = t.insertRow();
+      row.insertCell().innerText = i+1;
+      row.insertCell().innerText = ranking[i].getName;
+      row.insertCell().innerText = ranking[i].getScore;
+    }
+
     this.resetGame();
     this.chat.addServerMessage("Game Over! Thanks for playing!");
   }
