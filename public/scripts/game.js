@@ -121,15 +121,18 @@ export class game{
 }
 
   server_gameStart=()=>{
+    this.resetGame();
+    this.rankListDisplay.updateRankDisplay();
     this.timer.startTimer(constants.START_TIME);
     this.chat.addServerMessage("Starting game soon..");
-    document.getElementById("theWordWas").style.display = "initial";
 }
 
   server_roundBegin=(num)=>{
     this.timer.resetTimer();
     console.log("round", num, "begins");
     this.chat.addServerMessage("Round " + num + " begins!");
+    if(num==1)
+      document.getElementById("theWordWas").style.display = "initial";
 }
 
   server_pickPlayer=(id)=>{
@@ -269,7 +272,6 @@ export class game{
       row.insertCell().innerText = ranking[i].getScore;
     }
 
-    this.resetGame();
     this.guessProgress.clearGuessWord();
     this.chat.addServerMessage("Game Over! Thanks for playing!");
   }
