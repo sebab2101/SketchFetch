@@ -220,6 +220,8 @@ export class game{
 }
 
   server_drawEnd=(data)=>{
+    this.chat.addServerMessage("Drawing ended");
+    this.canvas.makeUnactive();
     document.getElementById("theWord").innerText = data["guessWord"];
     let scoreMap = new Map(data["scoreMap"]);
     console.log(data["scoreMap"],scoreMap);
