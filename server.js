@@ -1,8 +1,8 @@
 // Require http, express and socket
-var http = require('http');
-var express = require('express');
-var socket_io = require('socket.io');
-const {socketEvents,game} = require('./require/socketEvents.js')
+import * as http from 'http';
+import express from 'express';
+import {Server as socket_io} from 'socket.io';
+import {socketEvents,game} from './require/socketEvents.js'
 
 // Create app var from express, point it towards the public directory to serve up assets
 var app = express();
@@ -10,7 +10,7 @@ app.use(express.static('public'));
 var server = http.Server(app);
 console.log("Loaded index file");
 
-var io = socket_io(server);
+var io = new socket_io(server);
 server.listen(process.env.PORT || 9020, function() {
 	console.log('Server started at http://localhost:9020');
 });

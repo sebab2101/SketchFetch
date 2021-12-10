@@ -1,4 +1,4 @@
-class timer {
+export class timer{
   #defaultTime;
   #seconds;
   #interval;
@@ -15,7 +15,6 @@ class timer {
    }
 
    runTimer() {
-
      this.#seconds--;
      if(this.#seconds<1) {
        window.clearInterval(this.#interval);
@@ -35,6 +34,7 @@ class timer {
    }
 
    startTimer(time) {
+     time /= 1000;
      this.#defaultTime = time;
      this.#seconds = time;
      window.clearInterval(this.#interval);

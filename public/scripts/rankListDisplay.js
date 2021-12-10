@@ -1,4 +1,4 @@
-class rankListDisplay{
+export class rankListDisplay{
   rankingBox;
   rankedPlayers;
   rankList;

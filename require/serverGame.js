@@ -1,8 +1,9 @@
-const wordListClass = require('./wordList.js');
-const playerClass = require('../public/scripts/player.js');
-const rankListClass = require('../public/scripts/rankList.js');
-let canvasAvailable;
-let canvasServerClass;
+import {wordList as wordListClass} from './wordList.js';
+import {player as playerClass} from '../public/scripts/player.js';
+import {rankList as rankListClass} from '../public/scripts/rankList.js';
+import * as constants from '../public/constants.js' 
+
+let canvasAvailable,canvasServerClass;
 try{
     canvasServerClass = require('./canvasServer.js');
     canvasAvailable = true;
@@ -19,22 +20,9 @@ function createEnum(values) {
 }
 
 const states = createEnum(['idle', 'gameStart', 'roundBegin', 'pickPlayer', 'drawPhase','drawEnd', 'roundEnd', 'gameEnd']);
-const MIN_PLAYERS= 2;
-//time before game starts with sufficient players
-const START_TIME = 10000;
-//time before game restarts after game ends
-const END_TIME = 10000;
-//time for selecting a word
-const PICK_TIME = 10000;
-//time for drawing
-const DRAW_TIME = 35000;
-//time for displaying results after each draw
-const DRAW_END_TIME = 10000;
-const TOTAL_ROUNDS = 3;
-//number of choices drawer gets to pick from
-const NUM_RANDWORDS = 3;
 
-module.exports = class serverGame{
+
+export class serverGame{
     rankList = new rankListClass;
     //socket id to game id map
     clientMap = new Map;
@@ -43,13 +31,23 @@ module.exports = class serverGame{
     //game id to current round scores map
     roundScoresMap = new Map;
     wordList = new wordListClass();
+    //socket-io object
     io;
+    //stores round number
     roundCount = 1;
+    //players in the current drawPhase
+    playersThisDraw;
+    //Drawer's index in the rankList
     currentPlayerIndex;
+    //Drawer's gameId
     currentGameId;
+    //Drawer's socketId
     currentSocketId;
+    //Drawer's socket
     currentSocket;
+    //Timer associated with current game state
     currentTimerId;
+    //Start time for a drawPhase
     roundTime;
     rightGuesses=0;
     //initial state
@@ -150,6 +148,7 @@ module.exports = class serverGame{
     //initialize scoring
     initScoring(){
         this.roundTime = new Date();
+        this.playersThisDraw = this.numPlayers;
         this.rightGuesses = 0;
     }
 
@@ -157,7 +156,7 @@ module.exports = class serverGame{
     score(){  
         let t = new Date();
         let timeElapsed = t-this.roundTime;
-        let points = (DRAW_TIME-timeElapsed)/(DRAW_TIME) *300 + this.rightGuesses/(this.numPlayers-1) * 200;
+        let points = (constants.DRAW_TIME-timeElapsed)/(constants.DRAW_TIME) *300 + (this.playersThisDraw-1 -this.rightGuesses)/(this.playersThisDraw-1) * 200;
         this.rightGuesses++;
         return Math.round(points);
     }
@@ -165,7 +164,7 @@ module.exports = class serverGame{
     drawerScore(){
         let t = new Date();
         let timeElapsed = t- this.roundTime;
-        let points =(DRAW_TIME-timeElapsed)/(DRAW_TIME)*100 + this.rightGuesses/(this.numPlayers-1) * 400;
+        let points =(constants.DRAW_TIME-timeElapsed)/(constants.DRAW_TIME)*100 + this.rightGuesses/(this.playersThisDraw-1) * 400;
         return Math.round(points);
     }
 
@@ -183,9 +182,8 @@ module.exports = class serverGame{
                     this.removeTimeout();
                     this.io.emit('server_idle');
                 }
-
                 if(event == "newPlayer"){
-                    if(this.numPlayers >= MIN_PLAYERS){
+                    if(this.numPlayers >= constants.MIN_PLAYERS){
                         this.io.emit('server_idle');
                         this.state = states['gameStart'];
                         this.processState();
@@ -202,10 +200,10 @@ module.exports = class serverGame{
                         this.state = states['roundBegin'];
                         this.roundCount = 1;
                         this.processState();
-                    }, START_TIME);
+                    }, constants.START_TIME);
                 }
 
-                if(this.numPlayers < MIN_PLAYERS){
+                if(this.numPlayers < constants.MIN_PLAYERS){
                     this.state = states['idle'];
                     this.processState();
                     return;
@@ -236,7 +234,7 @@ module.exports = class serverGame{
                     this.currentSocket = this.getSocket(this.currentSocketId);
                     this.io.emit('server_pickPlayer', this.currentGameId);
                     console.log("Drawer GameId:", this.currentGameId, ",SocketId:",this.currentSocketId);
-                    let wordChoices = this.wordList.randomWordPick(NUM_RANDWORDS);
+                    let wordChoices = this.wordList.randomWordPick(constants.NUM_RANDWORDS);
                     this.currentSocket.emit("server_pickWord",{"wordChoices":wordChoices},(response)=>{
                         if(wordChoices.includes(response)){
                             clearTimeout(this.currentTimerId);
@@ -261,7 +259,7 @@ module.exports = class serverGame{
                         this.state = states['pickPlayer'];
                         this.processState();
                         return;
-                    }, PICK_TIME);
+                    }, constants.PICK_TIME);
                 }
 
                 if(event == "disconnectPlayer"){
@@ -302,7 +300,7 @@ module.exports = class serverGame{
                         this.state = states['drawEnd'];
                         this.processState();
                         return;
-                    }, DRAW_TIME);
+                    }, constants.DRAW_TIME);
                 }
 
                 if(event == "disconnectPlayer"){
@@ -353,7 +351,7 @@ module.exports = class serverGame{
                         this.resetChatRooms();
                         this.processState();
                         return;
-                    },DRAW_END_TIME);
+                    },constants.DRAW_END_TIME);
                 }
                 break;
             case states['roundEnd']:
@@ -364,7 +362,7 @@ module.exports = class serverGame{
                     this.roundCount++;
                 }
 
-                if(this.numPlayers < MIN_PLAYERS || this.roundCount > TOTAL_ROUNDS){
+                if(this.numPlayers < constants.MIN_PLAYERS || this.roundCount > constants.TOTAL_ROUNDS){
                     this.state = states['gameEnd'];
                 }else{
                     this.state = states['roundBegin'];
@@ -381,7 +379,7 @@ module.exports = class serverGame{
                         this.state = states['gameStart'];
                         this.processState();
                         return;
-                    }, END_TIME)
+                    }, constants.END_TIME)
                 }
 
                 if(this.numPlayers==0){

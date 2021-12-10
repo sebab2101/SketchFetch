@@ -1,4 +1,6 @@
-class rankList{  //TESTED
+import {player} from "./player.js"
+
+export class rankList{  //TESTED
   #players = [];
 
   constructor(oldPlayers = []){
@@ -148,7 +150,3 @@ class rankList{  //TESTED
     }
   }
 }
-
-try {
-  module.exports = rankList;
-} catch (e) {}

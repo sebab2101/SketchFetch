@@ -1,4 +1,4 @@
-class wordList{
+export class wordList{
     words= [
             "world", 
             "tea", 
@@ -497,5 +497,3 @@ class wordList{
             return randomWords;
         }
 }
-
-module.exports= wordList;

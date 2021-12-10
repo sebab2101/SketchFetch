@@ -1,4 +1,4 @@
-class player{  // TESTED
+export class player{  // TESTED
   #name;
   #playerId;
   #score;
@@ -87,7 +87,3 @@ class player{  // TESTED
   }
 
 }
-
-try {
-  module.exports = player;
-} catch (e) {}

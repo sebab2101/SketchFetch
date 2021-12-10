@@ -1,91 +1,22 @@
 /*
 Client-side js.
 */
-//time before game starts with sufficient players
-const START_TIME = 10000 / 1000;
-//time before game restarts after game ends
-const END_TIME = 10000 / 1000;
-//time for selecting a word
-const PICK_TIME = 10000 / 1000;
-//time for drawing
-const DRAW_TIME = 35000 / 1000;
-//time to show results after drawing;
-const DRAW_END_TIME = 10000 / 1000;
-//total rounds
-const TOTAL_ROUNDS = 3;
-
+import {game} from "./scripts/game.js"
+import {splashscreen} from "./scripts/splashscreen.js"
 
 var socket = io();
 var g;
 var splash = new splashscreen();
-document.getElementById("overlay").style.display = "none";
-document.getElementById("rankingOverlay").style.display = "none";
-document.getElementById("pickingOverlay").style.display = "none";
-function addListeners(){
-
-    splash.loginForm.addEventListener('submit', (e)=>{
-        e.preventDefault();
-        if (splash.nameInput.value) {
-            g = new game(splash.nameInput.value);
-            splash.splashZone.style.display = "none";
-            splash.unsplashZone.style.display = "block";
-            splash.nameInput.value = '';
-            //window resize event
-            window.addEventListener('resize', ()=>{
-                console.log("redrawing window!");
-                g.canvas.dimensionSet();
-                let height = g.canvas.canvas.height;
-                g.chat.chatBox.style.height = height;
-                g.rankListDisplay.rankingBox.style.height = height;
-            });
-            addSocketEvents();
-        }
-    });
-}
-addListeners();
-
-let toggleDraw = () => {
-    console.log("Toggling canvas drawing to ",!g.canvas.isActive());
-    if(!g.canvas.isActive()){
-        g.canvas.makeActive();
-    }else{
-        g.canvas.makeUnactive();
+splash.loginForm.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    if (splash.name) {
+        g = new game(splash.name,socket);
+        splash.toggleSplash();
+        splash.resetName();
+        addSocketEvents();
     }
-}
-//Socket receive stuff here
-
-
-function addSocketEvents(){
-socket.on('error', function (e) {
-    console.error('Connection Error:', e);
 });
 
-socket.on('connected', function (data) {
-    console.log('Socket connected (client side):', data);
-});
-
-socket.on('newPlayer',function (data){
-    console.log('New player! (Client): ', data);
-    p = new player(data['userName'],data['gameId']);
-    g.rankList.addPlayer(p);
-    g.rankList.changeRankings();
-    g.rankListDisplay.updateRankDisplay();
-    g.chat.addServerMessage(data['userName']+" has joined.");
-});
-
-socket.on('removePlayer',function (gameId){
-    let uName = g.rankList.getUsername(gameId);
-    console.log('A player Left! (Client): ', uName, gameId);
-    g.rankList.removePlayer(gameId);
-    g.rankList.changeRankings();
-    g.rankListDisplay.updateRankDisplay();
-    g.chat.addServerMessage(uName+" has left.");
-});
-
-socket.on('drawCanvas', function(data) {
-    console.log("Draw (Client):", data);
-    g.canvas.findxy(data["move"],data["x"],data["y"],data["orgWidth"]);
-});
 
 socket.on('changeColorCanvas', function(data) {
     console.log("changeColor (Client):", data);
@@ -271,12 +202,37 @@ socket.on("server_roundEnd",function(data){
     console.log("round", data["roundNumber"], "ended");
     g.rankListDisplay.updateRankDisplay();
     g.chat.addServerMessage("Round " + data["roundNumber"] + " ended!");
+=======
+//Socket receive stuff here
+function addSocketEvents(){
+    socket.on('error', function (e) {
+        console.error('Connection Error:', e);
+    });
 
-    g.rankList.sortRankList();
-    g.rankListDisplay.updateRankDisplay();
-});
 
-socket.on("server_gameEnd",function(){
-    g.chat.addServerMessage("Game Over! Thanks for playing!");
-});
+    socket.on('connected', function (data) {
+        console.log('Socket connected (client side):', data);
+    });
+
+    socket.on('newPlayer', g.newPlayer);
+    socket.on('removePlayer', g.removePlayer);
+    socket.on('drawCanvas', g.drawCanvas);
+    socket.on('changeColorCanvas', g.changeColorCanvas);
+    socket.on('changeBgColorCanvas', g.changeBgColorCanvas);
+    socket.on('clearCanvas', g.clearCanvas);
+    socket.on('brushSizeCanvas', g.brushSizeCanvas);
+    socket.on('canvasImage', g.loadCanvasImage);
+    socket.on('chatMessage', g.newChatMessage);
+    socket.on('correctGuess', g.processCorrectGuess);
+
+    //server state-change events
+    socket.on("server_idle",g.server_idle);
+    socket.on("server_gameStart",g.server_gameStart);
+    socket.on("server_roundBegin",g.server_roundBegin);
+    socket.on("server_pickPlayer",g.server_pickPlayer);
+    socket.on("server_pickWord",g.server_pickWord);
+    socket.on("server_drawPhase", g.server_drawPhase);
+    socket.on("server_drawEnd",g.server_drawEnd);
+    socket.on("server_roundEnd",g.server_roundEnd);
+    socket.on("server_gameEnd",g.addSocketEventsserver_gameEnd);
 }
