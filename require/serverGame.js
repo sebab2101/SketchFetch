@@ -163,7 +163,7 @@ export class serverGame{
     drawerScore(){
         let t = new Date();
         let timeElapsed = t- this.roundTime;
-        let points =(constants.DRAW_TIME-timeElapsed)/(constants.DRAW_TIME)*100 + this.rightGuesses/(this.playersThisDraw-1) * 400;
+        let points =(constants.DRAW_TIME-timeElapsed)/(constants.DRAW_TIME)*300 + this.rightGuesses/(this.playersThisDraw-1) * 200;
         return Math.round(points);
     }
 

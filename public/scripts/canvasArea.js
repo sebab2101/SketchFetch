@@ -55,6 +55,9 @@ export class canvasArea{
     makeActive(){
         this.drawBox.style.display = "block";
         this.active=true;
+        this.flag = false;
+        this.dot_flag = false;
+        this.drawStat = false;
         this.bgColor("white-bg");
         this.color("black-brush");
         this.canvas.style.cursor = "crosshair";
@@ -64,6 +67,9 @@ export class canvasArea{
     makeUnactive(){
         this.drawBox.style.display = "none";
         this.active=false;
+        this.flag = false;
+        this.dot_flag = false;
+        this.drawStat = false;
         this.canvas.style.cursor = "default";
         this.removeMouseListeners();
     }
