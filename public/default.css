@@ -262,6 +262,9 @@ body {
 }
 
 /* Sketchfetch logo animation*/
+#SketchFetchLogo{
+    font-size: 4rem;
+}
 
 .rainbow {
     text-align: center;
