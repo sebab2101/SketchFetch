@@ -137,6 +137,7 @@ export class game{
     document.getElementById("pickingOverlay").style.display = "initial";
     document.getElementById("pickingPlayerText").innerText ="Player " + userName + " is choosing a word!";
 
+    this.canvas.clearCanvas();
     this.canvas.makeUnactive();
     this.rankList.resetAllStatus();
     this.timer.startTimer(constants.PICK_TIME);
