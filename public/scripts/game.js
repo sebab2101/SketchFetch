@@ -99,6 +99,7 @@ export class game{
         let userName = player.getName ,type = "allRoom";
         if(player.getGuessed){
             type = "correctRoom";
+            console.log("correctRoom!");
         }
         this.chat.addMessage(userName,data['message'],type);
     }
@@ -150,7 +151,6 @@ export class game{
     document.getElementById("pickingPlayerText").innerText ="Player " + userName + " is choosing a word!";
 
     this.canvas.makeUnactive();
-    this.rankList.resetAllStatus();
     this.timer.startTimer(constants.PICK_TIME);
     if(id==this.player.getPlayerId){
       this.chat.addServerMessage("You are choosing a word!");
@@ -173,8 +173,7 @@ export class game{
     choice = data["wordChoices"][0];
     document.getElementById("overlay").style.display = "none";
     this.guessProgress.updateGuessWord(choice);
-    callback(choice);
-    }, constants.PICK_TIME*0.9); //automatically chooses after 90% of pick-time elapses
+    }, constants.PICK_TIME); //automatically chooses one after pick-time elapses
 
 
     document.getElementById('word1').addEventListener('click', ()=> {
@@ -260,6 +259,7 @@ export class game{
     this.rankList.processScoresMap(scoreMap);
     this.rankList.changeRankings();
     this.rankListDisplay.updateRankDisplay();
+    this.rankList.resetAllStatus();
 }
 
   server_roundEnd=(data)=>{

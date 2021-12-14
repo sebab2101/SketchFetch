@@ -2,14 +2,7 @@ import {wordList as wordListClass} from './wordList.js';
 import {player as playerClass} from '../public/scripts/player.js';
 import {rankList as rankListClass} from '../public/scripts/rankList.js';
 import * as constants from '../public/constants.js' 
-
-let canvasAvailable,canvasServerClass;
-try{
-    canvasServerClass = require('./canvasServer.js');
-    canvasAvailable = true;
-}catch{
-    canvasAvailable = false;
-}
+import {canvasArea as canvasServerClass} from './canvasServer.js';
 
 function createEnum(values) {
 	const enumObject = {};
@@ -55,7 +48,7 @@ export class serverGame{
     oldState = states['idle'];
 
     constructor(){
-        if(canvasAvailable){
+        if(constants.USE_SERVER_CANVAS){
             this.canvas = new canvasServerClass(true);
         }
     }
@@ -224,7 +217,7 @@ export class serverGame{
                 if(firstEntry){
                     this.removeTimeout();
                     this.roundScoresMap.clear();
-                    if(canvasAvailable){
+                    if(constants.USE_SERVER_CANVAS){
                         this.canvas.eraseImmediate();
                     }
                     this.rankList.resetAllStatus();
@@ -236,9 +229,11 @@ export class serverGame{
                     this.currentGameId = this.rankList.atIndex(this.currentPlayerIndex).getPlayerId;
                     this.currentSocketId = this.getSocketId(this.currentGameId);
                     this.currentSocket = this.getSocket(this.currentSocketId);
+                    this.currentSocket.join("correctPlayers");
                     this.io.emit('server_pickPlayer', this.currentGameId);
                     console.log("Drawer GameId:", this.currentGameId, ",SocketId:",this.currentSocketId);
                     let wordChoices = this.wordList.randomWordPick(constants.NUM_RANDWORDS);
+                    this.currentWord = wordChoices[0];
                     this.currentSocket.emit("server_pickWord",{"wordChoices":wordChoices},(response)=>{
                         if(wordChoices.includes(response)){
                             clearTimeout(this.currentTimerId);
@@ -252,15 +247,10 @@ export class serverGame{
                     });
 
                     this.currentTimerId = setTimeout(() => {
-                        if(this.currentPlayerIndex == 0){
-                            this.state = states['roundEnd'];
-                            this.processState();
-                            return;
-                        }
-                        this.currentPlayerIndex--;
-                        this.currentGameId = this.rankList.atIndex(this.currentPlayerIndex).getPlayerId;
-                        this.oldState = null;
-                        this.state = states['pickPlayer'];
+                        clearTimeout(this.currentTimerId);
+                        this.initScoring();
+                        console.log("Player picked: ", this.currentWord);
+                        this.state = states['drawPhase'];
                         this.processState();
                         return;
                     }, constants.PICK_TIME);
@@ -296,7 +286,6 @@ export class serverGame{
                 if(firstEntry){
                     this.removeTimeout();
                     this.io.emit("server_drawPhase", {"wordLength": this.currentWord.length, "drawer":this.currentGameId});
-                    this.currentSocket.join("correctPlayers");
                     let player = this.rankList.getPlayer(this.currentGameId);
                     player.rightGuessed();
                     player.makeDrawer();
@@ -324,10 +313,11 @@ export class serverGame{
                 }
 
                 if(event  == "newPlayer"){
-                    if(canvasAvailable){
+                    if(constants.USE_SERVER_CANVAS){
                         let tempSocket = this.getSocket(this.getSocketId(eventGameId));
                         let canvasImage = this.canvas.sendImage();
                         tempSocket.emit("canvasImage", {"image":canvasImage , "brushColor": this.canvas.drawColor});
+                        console.log("Emitting canvas image to ", eventGameId);
                     }
                 }
 
