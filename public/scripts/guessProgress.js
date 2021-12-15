@@ -16,7 +16,10 @@ export class guessProgress{
         this.guessWord = '_'.repeat(this.guessWordLength);
         this.guessWordArea.innerText = this.guessWord;
     }
-
+    
+    clearGuessWord(){
+        this.guessWordArea.innerText = "";
+    }
 
     updateLetter(pos,letter){
         this.guessWord = this.guessWord.substr(0,pos-1) + letter + this.guessWord.substr(pos);

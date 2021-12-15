@@ -2,14 +2,7 @@ import {wordList as wordListClass} from './wordList.js';
 import {player as playerClass} from '../public/scripts/player.js';
 import {rankList as rankListClass} from '../public/scripts/rankList.js';
 import * as constants from '../public/constants.js' 
-
-let canvasAvailable,canvasServerClass;
-try{
-    canvasServerClass = require('./canvasServer.js');
-    canvasAvailable = true;
-}catch{
-    canvasAvailable = false;
-}
+import {canvasArea as canvasServerClass} from './canvasServer.js';
 
 function createEnum(values) {
 	const enumObject = {};
@@ -55,7 +48,7 @@ export class serverGame{
     oldState = states['idle'];
 
     constructor(){
-        if(canvasAvailable){
+        if(constants.USE_SERVER_CANVAS){
             this.canvas = new canvasServerClass(true);
         }
     }
@@ -117,8 +110,7 @@ export class serverGame{
         Array.from(this.clientMap.keys()).forEach(socketId => {
             let socket = this.getSocket(socketId);
             if(socket != undefined){
-
-            socket.leave("correctPlayers");
+                socket.leave("correctPlayers");
             }
         });
     }
@@ -164,7 +156,7 @@ export class serverGame{
     drawerScore(){
         let t = new Date();
         let timeElapsed = t- this.roundTime;
-        let points =(constants.DRAW_TIME-timeElapsed)/(constants.DRAW_TIME)*100 + this.rightGuesses/(this.playersThisDraw-1) * 400;
+        let points =(constants.DRAW_TIME-timeElapsed)/(constants.DRAW_TIME)*300 + this.rightGuesses/(this.playersThisDraw-1) * 200;
         return Math.round(points);
     }
 
@@ -195,7 +187,7 @@ export class serverGame{
                 if(firstEntry){
                     this.removeTimeout();
                     this.io.emit('server_gameStart');
-
+                    this.rankList.resetRankList();
                     this.currentTimerId = setTimeout(() => {
                         this.state = states['roundBegin'];
                         this.roundCount = 1;
@@ -225,16 +217,23 @@ export class serverGame{
                 if(firstEntry){
                     this.removeTimeout();
                     this.roundScoresMap.clear();
-                    if(canvasAvailable){
+                    if(constants.USE_SERVER_CANVAS){
                         this.canvas.eraseImmediate();
                     }
                     this.rankList.resetAllStatus();
+                    if(this.rankList.atIndex(this.currentPlayerIndex) == null){
+                        this.state = states['idle'];
+                        this.processState();
+                        return;
+                    }
                     this.currentGameId = this.rankList.atIndex(this.currentPlayerIndex).getPlayerId;
                     this.currentSocketId = this.getSocketId(this.currentGameId);
                     this.currentSocket = this.getSocket(this.currentSocketId);
+                    this.currentSocket.join("correctPlayers");
                     this.io.emit('server_pickPlayer', this.currentGameId);
                     console.log("Drawer GameId:", this.currentGameId, ",SocketId:",this.currentSocketId);
                     let wordChoices = this.wordList.randomWordPick(constants.NUM_RANDWORDS);
+                    this.currentWord = wordChoices[0];
                     this.currentSocket.emit("server_pickWord",{"wordChoices":wordChoices},(response)=>{
                         if(wordChoices.includes(response)){
                             clearTimeout(this.currentTimerId);
@@ -248,15 +247,10 @@ export class serverGame{
                     });
 
                     this.currentTimerId = setTimeout(() => {
-                        if(this.currentPlayerIndex == 0){
-                            this.state = states['roundEnd'];
-                            this.processState();
-                            return;
-                        }
-                        this.currentPlayerIndex--;
-                        this.currentGameId = this.rankList.atIndex(this.currentPlayerIndex).getPlayerId;
-                        this.oldState = null;
-                        this.state = states['pickPlayer'];
+                        clearTimeout(this.currentTimerId);
+                        this.initScoring();
+                        console.log("Player picked: ", this.currentWord);
+                        this.state = states['drawPhase'];
                         this.processState();
                         return;
                     }, constants.PICK_TIME);
@@ -292,7 +286,6 @@ export class serverGame{
                 if(firstEntry){
                     this.removeTimeout();
                     this.io.emit("server_drawPhase", {"wordLength": this.currentWord.length, "drawer":this.currentGameId});
-                    this.currentSocket.join("correctPlayers");
                     let player = this.rankList.getPlayer(this.currentGameId);
                     player.rightGuessed();
                     player.makeDrawer();
@@ -320,10 +313,11 @@ export class serverGame{
                 }
 
                 if(event  == "newPlayer"){
-                    if(canvasAvailable){
+                    if(constants.USE_SERVER_CANVAS){
                         let tempSocket = this.getSocket(this.getSocketId(eventGameId));
                         let canvasImage = this.canvas.sendImage();
                         tempSocket.emit("canvasImage", {"image":canvasImage , "brushColor": this.canvas.drawColor});
+                        console.log("Emitting canvas image to ", eventGameId);
                     }
                 }
 
@@ -337,6 +331,7 @@ export class serverGame{
             case states['drawEnd']:
                 if(firstEntry){
                     this.removeTimeout();
+                    this.resetChatRooms();
                     this.roundScoresMap.set(this.currentGameId,this.drawerScore());
                     this.io.emit('server_drawEnd', {"guessWord":this.currentWord, "scoreMap":Array.from(this.roundScoresMap)});
                     this.rankList.processScoresMap(this.roundScoresMap);
@@ -348,7 +343,6 @@ export class serverGame{
                             this.state = states['pickPlayer'];
                             this.currentPlayerIndex--;
                         }
-                        this.resetChatRooms();
                         this.processState();
                         return;
                     },constants.DRAW_END_TIME);

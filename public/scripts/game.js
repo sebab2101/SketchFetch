@@ -20,7 +20,6 @@ export class game{
       console.log(response);
       this.canvas = new canvasArea(false,socket);
       this.timer = new timer();
-      console.log(this.timer);
       this.rankList = new rankList(response["rankList"]);
       this.rankListDisplay = new rankListDisplay(this.rankList);
       this.guessProgress = new guessProgress(this.timer);
@@ -36,6 +35,7 @@ export class game{
         this.chat.chatBox.style.height = height;
         this.rankListDisplay.rankingBox.style.height = height;
       });
+      const canvas = this.canvas.canvas;
       //force a window redraw event
       window.dispatchEvent(new Event('resize'));
     });
@@ -99,6 +99,7 @@ export class game{
         let userName = player.getName ,type = "allRoom";
         if(player.getGuessed){
             type = "correctRoom";
+            console.log("correctRoom!");
         }
         this.chat.addMessage(userName,data['message'],type);
     }
@@ -109,7 +110,15 @@ export class game{
     let userName = player.getName;
     console.log(userName, "guessed correctly.");
     if(userName != null){
+      if(player.getPlayerId==this.player.getPlayerId){
+        this.chat.addServerMessage("You guessed correctly!");
+        confetti({
+          particleCount: 100,
+          spread: 160
+        });
+      }else{
         this.chat.addServerMessage(userName + " guessed correctly!");
+      }
     }
     player.rightGuessed();
     this.rankListDisplay.updateRankDisplay();
@@ -121,6 +130,8 @@ export class game{
 }
 
   server_gameStart=()=>{
+    this.resetGame();
+    this.rankListDisplay.updateRankDisplay();
     this.timer.startTimer(constants.START_TIME);
     this.chat.addServerMessage("Starting game soon..");
 }
@@ -129,6 +140,8 @@ export class game{
     this.timer.resetTimer();
     console.log("round", num, "begins");
     this.chat.addServerMessage("Round " + num + " begins!");
+    if(num==1)
+      document.getElementById("theWordWas").style.display = "initial";
 }
 
   server_pickPlayer=(id)=>{
@@ -139,9 +152,12 @@ export class game{
 
     this.canvas.clearCanvas();
     this.canvas.makeUnactive();
-    this.rankList.resetAllStatus();
     this.timer.startTimer(constants.PICK_TIME);
-    this.chat.addServerMessage("Player " + userName + " is choosing a word!");
+    if(id==this.player.getPlayerId){
+      this.chat.addServerMessage("You are choosing a word!");
+    }else{
+      this.chat.addServerMessage("Player " + userName + " is choosing a word!");
+    }
 }
 
   server_pickWord=(data,callback)=>{
@@ -158,8 +174,7 @@ export class game{
     choice = data["wordChoices"][0];
     document.getElementById("overlay").style.display = "none";
     this.guessProgress.updateGuessWord(choice);
-    callback(choice);
-    }, constants.PICK_TIME*0.9); //automatically chooses after 90% of pick-time elapses
+    }, constants.PICK_TIME); //automatically chooses one after pick-time elapses
 
 
     document.getElementById('word1').addEventListener('click', ()=> {
@@ -185,6 +200,8 @@ export class game{
         clearTimeout(timeId);
         this.guessProgress.updateGuessWord(choice);
     });
+
+    this.canvas.eraseImmediate();
 }
 
   server_drawPhase=(data)=>{
@@ -200,7 +217,11 @@ export class game{
     }
     console.log("Receiving draw data from", userName);
     this.timer.startTimer(constants.DRAW_TIME);
-    this.chat.addServerMessage(userName + " is drawinthis.");
+    if(player.getPlayerId==this.player.getPlayerId){
+      this.chat.addServerMessage("You are drawing.");
+    }else{
+      this.chat.addServerMessage(userName + " is drawing.");
+    }
     player.rightGuessed();
     player.makeDrawer();
     if(this.player.getPlayerId == gameId)
@@ -213,48 +234,66 @@ export class game{
 
     this.rankListDisplay.updateRankDisplay();
 }
-  
+
   server_drawEnd=(data)=>{
-    document.getElementById("theWord").innerHTML = "";
-    document.getElementById("theWord").innerHTML += data["guessWord"];
+    this.chat.addServerMessage("Drawing ended");
+    this.canvas.makeUnactive();
+    document.getElementById("theWord").innerText = data["guessWord"];
     let scoreMap = new Map(data["scoreMap"]);
     console.log(data["scoreMap"],scoreMap);
     document.getElementById("rankingOverlay").style.display = "initial";
     let t = document.getElementById("rankingTable").getElementsByTagName('tbody')[0];
     this.timer.startTimer(constants.DRAW_END_TIME);
     const iterator1 = scoreMap.keys();
-    for (var i=0;i<scoreMap.size;i++){
-    var row = t.insertRow();
-    let s = iterator1.next().value;
-    if(i == scoreMap.size-1){
-        row.insertCell().innerHTML = "&#9999;&#65039;";
-    }else{
-        row.insertCell().innerText = i+1;
+      for (var i=0;i<scoreMap.size;i++){
+      var row = t.insertRow();
+      let s = iterator1.next().value;
+      if(i == scoreMap.size-1){
+          row.insertCell().innerHTML = "&#9999;&#65039;";
+      }else{
+          row.insertCell().innerText = i+1;
+      }
+      row.insertCell().innerText = this.rankList.getUsername(s);
+      row.insertCell().innerText = "+"+scoreMap.get(s);
     }
-    row.insertCell().innerText = this.rankList.getUsername(s);
-    row.insertCell().innerText = "+"+scoreMap.get(s);
-    }
-
-
+    this.guessProgress.clearGuessWord();
     this.rankList.processScoresMap(scoreMap);
     this.rankList.changeRankings();
     this.rankListDisplay.updateRankDisplay();
+    this.rankList.resetAllStatus();
 }
 
   server_roundEnd=(data)=>{
-    console.log("round", data["roundNumber"], "ended");
+    console.log("round", data["roundCount"], "ended");
     this.rankListDisplay.updateRankDisplay();
-    this.chat.addServerMessage("Round " + data["roundNumber"] + " ended!");
-
+    this.chat.addServerMessage("Round " + data["roundCount"] + " ended!");
     this.rankList.sortRankList();
     this.rankListDisplay.updateRankDisplay();
 }
 
   server_gameEnd=()=>{
-    this.resetGame();
+    var ranking = this.rankList.allPlayers;
+    document.getElementById("rankingOverlay").style.display = "initial";
+    document.getElementById("theWordWas").style.display = "none";
+    document.getElementById("theWord").innerText = "Final Rankings";
+    let t1 = document.getElementById("rankingTable");
+    for(var i = t1.rows.length - 1; i > 0; i--)
+    {
+    t1.deleteRow(i);
+    }
+
+    let t = document.getElementById("rankingTable").getElementsByTagName('tbody')[0];
+    for (var i=0; i<ranking.length; i++){
+      var row = t.insertRow();
+      row.insertCell().innerText = i+1;
+      row.insertCell().innerText = ranking[i].getName;
+      row.insertCell().innerText = ranking[i].getScore;
+    }
+
+    this.guessProgress.clearGuessWord();
+    this.confettiCanon(constants.END_TIME/2);
     this.chat.addServerMessage("Game Over! Thanks for playing!");
   }
-
 
   resetGame(){
     this.canvas.eraseImmediate();
@@ -262,4 +301,30 @@ export class game{
     this.rankList.resetRankList();
   }
 
+  confettiCanon(duration){
+    let end = Date.now() + duration;
+      
+    let frame= ()=>{
+      // launch a few confetti from the left edge
+      confetti({
+        particleCount: 7,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 }
+      });
+      // and launch a few from the right edge
+      confetti({
+        particleCount: 7,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 }
+      });
+    
+      // keep going until we are out of time
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      }
+    };
+    frame();
+  }
 }

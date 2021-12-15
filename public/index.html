@@ -13,11 +13,21 @@
             <div class = "row">
                 <div class="col-md-4"></div>
                 <div class="col-md-4">
-                    <div class= "roundBlock border rounded-3 my-2">
+                        <div class= "roundBlock border rounded-3 my-2">
+                            <div class = "justify-content-center">
+                                <div id ="SketchFetchLogo" class="rainbow rainbow_text_animated" data-shadow="SketchFetch">
+                                    SketchFetch
+                                </div>
+                            </div>
                         <form id="loginForm" action="" class="align-self-end">
                             <input class= "form-control" placeholder= "Username" id="nameInput" autofocus="autofocus" autocomplete="off" />
                             <button type="submit" id="loginSubmitButton" class="btn btn-success btn-sm">Join Game</button>
                         </form>
+                        <div class = "text-center text-light">
+                            <p>
+                                A real-time web-based pictionary game
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -26,7 +36,7 @@
             <div class="row mb-2">
                 <div class="col-md-1"></div>
                 <div class="col-md-2">
-                    <div id="SketchFetchLogo" class = "mx-0 mb-2 roundBlock d-flex justify-content-center  border rounded-3  ">
+                    <div class = "mx-0 mb-2 roundBlock d-flex justify-content-center  border rounded-3 ">
                         <div class="rainbow rainbow_text_animated" data-shadow="SketchFetch">
                             SketchFetch
                         </div>
@@ -68,7 +78,7 @@
                           <button class="btn btn-primary" type="submit" id="word3"></button>
                         </div>
                         <div id="rankingOverlay" style="display: none;">
-                          <p class="whiteOutText">The word was: </p>
+                          <p class="whiteOutText" id="theWordWas">The word was: </p>
                           <p id="theWord" class="whiteOutText"></p>
                           <table id="rankingTable" class="table table-hover whiteOutText">
                             <thead class="table-dark">
@@ -172,6 +182,8 @@
     </body>
     <!-- socket.io client-side script -->
 	<script src="/socket.io/socket.io.js"></script>
+    <!-- emoji confetti client-side script-->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
     <!-- custom client-side javascript -->
 	<script type= "module" src="index.js"></script>
 

@@ -55,6 +55,9 @@ export class canvasArea{
     makeActive(){
         this.drawBox.style.display = "block";
         this.active=true;
+        this.flag = false;
+        this.dot_flag = false;
+        this.drawStat = false;
         this.bgColor("white-bg");
         this.color("black-brush");
         this.canvas.style.cursor = "crosshair";
@@ -64,6 +67,9 @@ export class canvasArea{
     makeUnactive(){
         this.drawBox.style.display = "none";
         this.active=false;
+        this.flag = false;
+        this.dot_flag = false;
+        this.drawStat = false;
         this.canvas.style.cursor = "default";
         this.removeMouseListeners();
     }
@@ -302,10 +308,9 @@ export class canvasArea{
         var url = URL.createObjectURL(blob);
         var img = new Image;
         img.src = url;
-
+        console.log(url);
         img.onload = ()=>{
-            this.ctx.drawImage(img,0,0,this.canvasWidth,this.canvasHeight,);
-            URL.revokeObjectURL(url);
+            this.ctx.drawImage(img,0,0,this.canvasWidth,this.canvasHeight);
         }
     }
 }

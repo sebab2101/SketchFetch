@@ -1,7 +1,8 @@
-const {createCanvas} = require('canvas')
+import pkg from 'canvas';
+const {createCanvas} = pkg;
 const CANVAS_WIDTH = 1000;
 
-module.exports = class canvasArea{
+export class canvasArea{
     canvas;
     canvasWidth=CANVAS_WIDTH;
     canvasHeight= CANVAS_WIDTH *(3/4);
@@ -154,8 +155,9 @@ module.exports = class canvasArea{
         }
     }
 
-    sendImage(){
+    sendImage=()=>{
         let imageObject= this.canvas.toBuffer('image/png');
+        console.log(this.canvas)
         console.log(imageObject);
         return imageObject;
     }
