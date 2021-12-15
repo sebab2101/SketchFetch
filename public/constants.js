@@ -1,7 +1,7 @@
 //minimum number of players to continue running the game
 export const MIN_PLAYERS= 2;
 //time before game starts with sufficient players (ms)
-export const START_TIME = 10000;
+export const START_TIME = 15000;
 //time before game restarts after game ends (ms)
 export const END_TIME = 10000;
 //time for selecting a word (ms)
@@ -15,4 +15,4 @@ export const TOTAL_ROUNDS = 3;
 //number of choices drawer gets to pick from
 export const NUM_RANDWORDS = 3;
 //Keep a copy of the canvas on the server-side
-export const USE_SERVER_CANVAS = true;
+export const USE_SERVER_CANVAS = false;
